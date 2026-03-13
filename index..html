@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>極致單字卡 Pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-hover: #4338CA;
+            --secondary: #10B981;
+            --secondary-hover: #059669;
+            --bg-gradient: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-main: #1F2937;
+            --text-muted: #6B7280;
+        }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans TC', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-main);
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* 毛玻璃卡片風格 */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            padding: 30px 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* 設定區塊 */
+        .setup-area { display: block; }
+        .practice-area { display: none; animation: fadeIn 0.5s ease; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        select {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            border-radius: 12px;
+            border: 2px solid #E5E7EB;
+            background-color: white;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+
+        select:focus { border-color: var(--primary); }
+
+        /* 按鈕風格 */
+        .btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            background: var(--primary);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .btn:active { transform: scale(0.97); }
+        .btn:hover { background: var(--primary-hover); }
+        
+        .btn-reveal { background: var(--primary); margin-top: 20px; }
+        .btn-next { background: var(--secondary); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); margin-top: 20px; display: none; }
+        .btn-next:hover { background: var(--secondary-hover); }
+
+        /* 單字顯示區 */
+        .word-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .word-en {
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-audio {
+            background: #EEF2FF;
+            color: var(--primary);
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .btn-audio:active { transform: scale(0.9); background: #E0E7FF; }
+
+        .pos-badge {
+            display: inline-block;
+            background: #F3F4F6;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            border: 1px solid #E5E7EB;
+        }
+
+        /* 詳情區 (預設隱藏) */
+        .details-area {
+            display: none;
+            background: #F9FAFB;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 20px;
+            border: 1px solid #E5E7EB;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .details-zh {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 0 0 10px 0;
+        }
+
+        .details-note {
+            font-size: 16px;
+            color: var(--text-muted);
+            margin: 0;
+            padding-top: 10px;
+            border-top: 1px dashed #D1D5DB;
+            line-height: 1.5;
+        }
+
+        /* 進度條 */
+        .progress-wrapper {
+            margin-bottom: 25px;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 8px;
+            background: #E5E7EB;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.4s ease;
+            border-radius: 10px;
+        }
+        
+        .finish-screen { display: none; text-align: center; }
+        .finish-icon { font-size: 60px; color: #F59E0B; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="glass-card setup-area" id="setupArea">
+            <h1><i class="fa-solid fa-layer-group"></i> 準備練習</h1>
+            
+            <div class="input-group">
+                <label>選擇單字表 (CSV)</label>
+                <select id="csvSelector">
+                    <option value="">-- 請選擇單字表 --</option>
+                    <option value="data/list1.csv">單字表 1</option>
+                    <option value="data/list2.csv">單字表 2</option>
+                    </select>
+            </div>
+
+            <div class="input-group">
+                <label>本次抽題數量</label>
+                <select id="drawCount">
+                    <option value="10" selected>隨機抽 10 題</option>
+                    <option value="20">隨機抽 20 題</option>
+                    <option value="50">隨機抽 50 題</option>
+                    <option value="all">全顯示 (全部打亂)</option>
+                </select>
+            </div>
+
+            <button class="btn" onclick="startPractice()">開始練習 <i class="fa-solid fa-rocket"></i></button>
+        </div>
+
+        <div class="glass-card practice-area" id="practiceArea">
+            
+            <div class="progress-wrapper">
+                <div class="progress-text">
+                    <span>進度</span>
+                    <span id="progressCount">1 / 10</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div class="progress-bar-fill" id="progressBar"></div>
+                </div>
+            </div>
+
+            <div id="cardContent">
+                <div class="word-header">
+                    <h2 class="word-en" id="wordEn">Apple</h2>
+                    <button class="btn-audio" onclick="playAudio()"><i class="fa-solid fa-volume-high"></i></button>
+                </div>
+                
+                <div class="pos-badge" id="wordPos">n.</div>
+
+                <div class="details-area" id="detailsArea">
+                    <p class="details-zh" id="wordZh">蘋果</p>
+                    <p class="details-note" id="wordNote">一天一蘋果，醫生遠離我。</p>
+                </div>
+
+                <button class="btn btn-reveal" id="revealBtn" onclick="revealAnswer()">顯示中文與備註</button>
+                <button class="btn btn-next" id="nextBtn" onclick="nextWord()">下一個 <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+
+            <div class="finish-screen" id="finishScreen">
+                <div class="finish-icon"><i class="fa-solid fa-trophy"></i></div>
+                <h2>太棒了！練習完成</h2>
+                <p style="color: #6B7280; margin-bottom: 20px;">你已經複習完本次的所有單字。</p>
+                <button class="btn" onclick="location.reload()">再練一次 <i class="fa-solid fa-rotate-right"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let allWords = [];
+        let practiceWords = [];
+        let currentIndex = 0;
+
+        // 1. 開始練習：讀取與設定
+        function startPractice() {
+            const fileUrl = document.getElementById('csvSelector').value;
+            const drawCount = document.getElementById('drawCount').value;
+
+            if (!fileUrl) {
+                alert("請先選擇一個單字表！");
+                return;
+            }
+
+            // 按鈕顯示讀取中
+            const btn = document.querySelector('.setup-area .btn');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 載入中...';
+
+            Papa.parse(fileUrl, {
+                download: true,
+                header: true,
+                skipEmptyLines: true,
+                complete: function(results) {
+                    allWords = results.data;
+                    
+                    // 打亂整個單字表
+                    shuffleArray(allWords);
+
+                    // 根據選擇決定題目數量
+                    if (drawCount === 'all') {
+                        practiceWords = allWords;
+                    } else {
+                        practiceWords = allWords.slice(0, parseInt(drawCount));
+                    }
+
+                    // 如果 CSV 單字量比抽題數少，做個防呆
+                    if (practiceWords.length === 0) {
+                        alert("檔案裡沒有單字或格式錯誤！");
+                        btn.innerHTML = '開始練習 <i class="fa-solid fa-rocket"></i>';
+                        return;
+                    }
+
+                    // 切換畫面
+                    document.getElementById('setupArea').style.display = 'none';
+                    document.getElementById('practiceArea').style.display = 'block';
+                    
+                    currentIndex = 0;
+                    renderCard();
+                },
+                error: function(err) {
+                    alert("檔案讀取失敗，請確認路徑是否正確。");
+                    btn.innerHTML = '開始練習 <i class="fa-solid fa-rocket"></i>';
+                }
+            });
+        }
+
+        // 2. 洗牌演算法
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // 3. 渲染單字卡
+        function renderCard() {
+            const currentWord = practiceWords[currentIndex];
+
+            // 填入資料 (請確保 CSV 標題為：英文, 詞性, 中文, 備註)
+            document.getElementById('wordEn').textContent = currentWord['英文'] || 'Error';
+            document.getElementById('wordPos').textContent = currentWord['詞性'] || '無詞性';
+            document.getElementById('wordZh').textContent = currentWord['中文'] || '無中文解釋';
+            document.getElementById('wordNote').textContent = currentWord['備註'] || '';
+
+            // 如果沒有備註，隱藏備註分隔線
+            if (!currentWord['備註']) {
+                document.getElementById('wordNote').style.display = 'none';
+            } else {
+                document.getElementById('wordNote').style.display = 'block';
+            }
+
+            // 狀態重置：隱藏詳情、顯示「顯示按鈕」
+            document.getElementById('detailsArea').style.display = 'none';
+            document.getElementById('revealBtn').style.display = 'block';
+            document.getElementById('nextBtn').style.display = 'none';
+
+            // 更新進度條
+            const total = practiceWords.length;
+            const current = currentIndex + 1;
+            document.getElementById('progressCount').textContent = `${current} / ${total}`;
+            document.getElementById('progressBar').style.width = `${(current / total) * 100}%`;
+
+            // 自動發音 (依賴手機瀏覽器政策，通常點擊"開始練習"後就允許發音了)
+            playAudio();
+        }
+
+        // 4. 顯示解答
+        function revealAnswer() {
+            document.getElementById('detailsArea').style.display = 'block';
+            document.getElementById('revealBtn').style.display = 'none';
+            
+            // 如果是最後一題，按鈕文字改為「完成」
+            const nextBtn = document.getElementById('nextBtn');
+            nextBtn.style.display = 'block';
+            if (currentIndex === practiceWords.length - 1) {
+                nextBtn.innerHTML = '完成練習 <i class="fa-solid fa-check"></i>';
+            } else {
+                nextBtn.innerHTML = '下一個 <i class="fa-solid fa-arrow-right"></i>';
+            }
+        }
+
+        // 5. 下一個單字
+        function nextWord() {
+            if (currentIndex < practiceWords.length - 1) {
+                currentIndex++;
+                renderCard();
+            } else {
+                // 結束畫面
+                document.getElementById('cardContent').style.display = 'none';
+                document.getElementById('finishScreen').style.display = 'block';
+            }
+        }
+
+        // 6. 語音朗讀 (Web Speech API)
+        function playAudio() {
+            const text = document.getElementById('wordEn').textContent;
+            if ('speechSynthesis' in window) {
+                // 停止當前可能正在播放的聲音
+                window.speechSynthesis.cancel();
+                
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US'; // 美式發音
+                utterance.rate = 0.9;     // 語速稍微放慢一點點
+                window.speechSynthesis.speak(utterance);
+            } else {
+                alert("您的瀏覽器不支援語音朗讀功能");
+            }
+        }
+    </script>
+</body>
+</html>
