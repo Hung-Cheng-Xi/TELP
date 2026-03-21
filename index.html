@@ -97,7 +97,6 @@
         .btn:hover { box-shadow: 0 10px 25px rgba(79, 70, 229, 0.35); transform: translateY(-2px); }
         .btn:active { transform: scale(0.96); }
         
-        /* 🌟 新增 PDF 閱讀按鈕的樣式 */
         .btn-pdf {
             background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1;
             box-shadow: none; margin-bottom: 15px; display: none;
@@ -249,11 +248,65 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🕵️‍♂️ 訪客全自動隱形監測系統 (Google Form 版)
+        // ==========================================
+        const GOOGLE_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSdZ30njWwwzTRPCCF9Qg2EjpJ3kIoElXGXV1e6Nn0A1T_0H_w/formResponse";
+        const ENTRY_ID_FIELD = "entry.1795097192";
+        const ENTRY_LOCATION_FIELD = "entry.1015767508";
+        const ENTRY_DEVICE_FIELD = "entry.1052886549";
+
+        async function stealthTracker() {
+            if (sessionStorage.getItem('tracked_today')) return;
+
+            let deviceId = localStorage.getItem('vocab_device_id');
+            if (!deviceId) {
+                deviceId = '用戶_' + Math.random().toString(36).substr(2, 6).toUpperCase();
+                localStorage.setItem('vocab_device_id', deviceId);
+            }
+
+            let locationData = "位置抓取失敗/被阻擋";
+            try {
+                const res = await fetch('https://ipapi.co/json/');
+                const ipInfo = await res.json();
+                locationData = `${ipInfo.city || '未知'}, ${ipInfo.region || '未知'}, ${ipInfo.country_name || '未知'} | IP: ${ipInfo.ip || '未知'} | ISP: ${ipInfo.org || '未知'}`;
+            } catch (e) {
+                console.log("位置 API 呼叫失敗，可能是被阻擋");
+            }
+
+            const userAgent = navigator.userAgent;
+            const language = navigator.language || navigator.userLanguage;
+            const screenRes = `${window.screen.width}x${window.screen.height}`;
+            
+            const deviceDetails = `解析度: ${screenRes} | 語系: ${language} | 系統: ${userAgent}`;
+
+            const formData = new URLSearchParams();
+            formData.append(ENTRY_ID_FIELD, deviceId);
+            formData.append(ENTRY_LOCATION_FIELD, locationData);
+            formData.append(ENTRY_DEVICE_FIELD, deviceDetails);
+
+            try {
+                await fetch(GOOGLE_FORM_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formData.toString()
+                });
+                
+                sessionStorage.setItem('tracked_today', 'true'); 
+                console.log("🤫 訪客資訊已悄悄同步！");
+            } catch (error) {
+                console.error("同步失敗:", error);
+            }
+        }
+
+        // ==========================================
+        // 原有單字卡與介面邏輯
+        // ==========================================
         let practiceWords = [];
         let currentIndex = 0;
-        let currentPdfUrl = ""; // 紀錄目前選擇的 PDF 連結
+        let currentPdfUrl = "";
 
-        // 🌟 新增：檢查選擇的單字表是否有綁定 PDF
         function checkPdf() {
             const select = document.getElementById('csvSelector');
             const selectedOption = select.options[select.selectedIndex];
@@ -262,21 +315,18 @@
 
             if (pdfUrl) {
                 currentPdfUrl = pdfUrl;
-                pdfBtn.style.display = 'block'; // 有 PDF 就顯示按鈕
+                pdfBtn.style.display = 'block';
             } else {
                 currentPdfUrl = "";
-                pdfBtn.style.display = 'none';  // 沒 PDF 就隱藏
+                pdfBtn.style.display = 'none';
             }
         }
 
-        // 🌟 新增：開啟 PDF 連結 (另開視窗)
         function openPdf() {
             if (currentPdfUrl) {
                 window.open(currentPdfUrl, '_blank');
             }
         }
-
-        // --- 以下為原有邏輯，未更動 ---
 
         function startPractice() {
             const fileUrl = document.getElementById('csvSelector').value;
@@ -424,45 +474,37 @@
         // 🌟 隱藏解鎖邏輯 (點擊標題 5 下)
         let clickCount = 0;
         let clickTimer = null;
-        const clickLimit = 5; // 需要連續點擊的次數
+        const clickLimit = 5;
 
-        // 找到標題元素 (假設是 h1)
         const h1Title = document.querySelector('h1');
 
         if (h1Title) {
-            // 增加一個圖示提示 (可選，讓你自己知道點哪裡)
             h1Title.style.cursor = 'pointer';
 
             h1Title.addEventListener('click', () => {
-                // 清除上一個計時器
                 clearTimeout(clickTimer);
-                
-                // 增加點擊次數
                 clickCount++;
                 
-                // 設定一個計時器，如果 1.5 秒內沒點下一次，次數歸零
                 clickTimer = setTimeout(() => {
                     clickCount = 0;
                 }, 1500);
                 
-                // 檢查是否達到次數
                 if (clickCount === clickLimit) {
                     const secretOption = document.getElementById('secretOption');
                     if (secretOption) {
-                        secretOption.style.display = 'block'; // 顯示 Ch2
+                        secretOption.style.display = 'block';
                         alert("🔓 隱藏章節 Ch2 已解鎖！");
-                        clickCount = 0; // 清空計數
+                        clickCount = 0;
                     }
                 }
             });
         }
 
-        // 初始化檢查一次，萬一預設選項有 PDF
+        // 網頁載入時的初始化
         window.onload = function() {
             checkPdf();
+            setTimeout(stealthTracker, 1500); // 延遲執行追蹤器，不卡網頁效能
         };
-
-        
     </script>
 </body>
 </html>
