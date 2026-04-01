@@ -34,6 +34,56 @@
             transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
 
+        .card-shell {
+            transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.28s ease;
+            touch-action: pan-y;
+        }
+
+        .card-shell.swipe-left::after,
+        .card-shell.swipe-right::after {
+            position: absolute;
+            top: 1.5rem;
+            padding: 0.55rem 0.95rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            color: white;
+            pointer-events: none;
+        }
+
+        .card-shell.swipe-left::after {
+            content: "NOT YET";
+            left: 1.5rem;
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            box-shadow: 0 14px 28px rgba(239, 68, 68, 0.25);
+        }
+
+        .card-shell.swipe-right::after {
+            content: "MASTERED";
+            right: 1.5rem;
+            background: linear-gradient(135deg, #22c55e, #14b8a6);
+            box-shadow: 0 14px 28px rgba(34, 197, 94, 0.22);
+        }
+
+        .card-shell.is-animating {
+            pointer-events: none;
+        }
+
+        .card-shell.is-exiting-left {
+            transform: translateX(-135%) rotate(-16deg) scale(0.96);
+            opacity: 0;
+        }
+
+        .card-shell.is-exiting-right {
+            transform: translateX(135%) rotate(16deg) scale(0.96);
+            opacity: 0;
+        }
+
+        .result-modal-open {
+            overflow: hidden;
+        }
+
         /* 自訂滾動條，保持整潔 */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
@@ -95,22 +145,25 @@
             <i class="fa-solid fa-layer-group text-indigo-500 mr-2"></i>單字學習
         </h1>
         
-        <!-- 中間：切換按鈕與計數器 -->
-        <div class="w-full md:w-auto flex items-center justify-center gap-2 md:gap-4">
-            <button onclick="changeWord(-1)" class="flex-1 md:flex-none px-4 py-2.5 bg-white border border-slate-200 text-slate-600 rounded-xl hover:bg-slate-50 transition shadow-sm font-medium flex items-center justify-center">
-                <i class="fa-solid fa-arrow-left mr-2"></i> 上一個
-            </button>
-            
-            <!-- 🌟 新增：單字順位計數器 🌟 -->
+        <!-- 中間：計數器 -->
+        <div class="w-full md:w-auto flex items-center justify-center">
             <span id="word-counter" class="text-slate-500 font-bold px-1 text-base md:text-lg whitespace-nowrap min-w-[3rem] text-center tracking-wide">
                 1 / 1
             </span>
-
-            <button onclick="changeWord(1)" class="flex-1 md:flex-none px-4 py-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition shadow-md shadow-indigo-200 font-medium flex items-center justify-center">
-                下一個 <i class="fa-solid fa-arrow-right ml-2"></i>
-            </button>
         </div>
         
+    </div>
+
+    <div class="w-full max-w-5xl flex flex-wrap items-center justify-between gap-3 mb-4 px-2">
+        <div class="inline-flex items-center gap-2 rounded-full bg-white/90 px-4 py-2 text-sm text-slate-500 shadow-sm border border-slate-200">
+            <i class="fa-solid fa-hand-pointer text-indigo-400"></i>
+            點卡片或空白鍵翻面，左滑或方向鍵左代表還不會，右滑或方向鍵右代表已經會
+        </div>
+        <div class="flex flex-wrap items-center gap-2 text-sm font-semibold">
+            <span id="known-count-chip" class="rounded-full bg-emerald-50 text-emerald-700 px-3 py-1.5 border border-emerald-100">已經會 0</span>
+            <span id="unknown-count-chip" class="rounded-full bg-orange-50 text-orange-700 px-3 py-1.5 border border-orange-100">還不會 0</span>
+            <span id="remaining-count-chip" class="rounded-full bg-slate-100 text-slate-600 px-3 py-1.5 border border-slate-200">剩餘 0</span>
+        </div>
     </div>
 
     <!-- 單字卡容器 (固定高度，防止位移) -->
@@ -118,6 +171,7 @@
     <div class="perspective-1000 w-full max-w-5xl h-[750px] md:h-[600px] relative">
         
         <!-- 卡片翻轉主體 -->
+        <div id="card-shell" class="card-shell w-full h-full relative">
         <div id="flashcard" class="card-inner w-full h-full relative transform-style-3d shadow-xl rounded-2xl">
             
             <!-- ================= 正面 (單字回想區) ================= -->
@@ -249,6 +303,50 @@
                     </div>
 
                 </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <div id="review-summary-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
+        <div id="review-summary-panel" class="w-full max-w-xl rounded-[28px] bg-white shadow-2xl shadow-slate-900/20 overflow-hidden">
+            <div class="px-6 md:px-8 pt-7 pb-5 bg-gradient-to-br from-indigo-600 via-indigo-500 to-sky-500 text-white">
+                <p class="text-xs font-bold tracking-[0.25em] uppercase text-white/75 mb-2">Review Summary</p>
+                <h2 class="text-2xl md:text-3xl font-bold">這一輪練習完成了</h2>
+                <p id="summary-message" class="text-sm md:text-base text-white/85 mt-2">你已經完成本輪單字分類。</p>
+            </div>
+
+            <div class="p-6 md:p-8">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-slate-400 mb-2">複習了多少</p>
+                        <p id="summary-reviewed-count" class="text-3xl font-extrabold text-slate-800">0</p>
+                    </div>
+                    <div class="rounded-2xl border border-orange-100 bg-orange-50 p-4">
+                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-orange-400 mb-2">還剩不會</p>
+                        <p id="summary-unknown-count" class="text-3xl font-extrabold text-orange-600">0</p>
+                    </div>
+                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
+                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-400 mb-2">完成單字</p>
+                        <p id="summary-known-count" class="text-3xl font-extrabold text-emerald-600">0</p>
+                    </div>
+                </div>
+
+                <div class="rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-600 mb-6">
+                    <span id="summary-progress-detail">本次共有 0 個單字。</span>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button id="continue-unknown-btn" type="button" class="flex-1 rounded-2xl bg-orange-500 text-white font-semibold px-5 py-3.5 hover:bg-orange-600 transition shadow-lg shadow-orange-200">
+                        繼續複習不會的
+                    </button>
+                    <button id="restart-review-btn" type="button" class="flex-1 rounded-2xl bg-slate-900 text-white font-semibold px-5 py-3.5 hover:bg-slate-700 transition shadow-lg shadow-slate-300">
+                        重新複習全部
+                    </button>
+                </div>
+                <button id="back-home-btn" type="button" class="mt-3 w-full rounded-2xl border border-slate-200 bg-white text-slate-600 font-semibold px-5 py-3.5 hover:bg-slate-50 transition">
+                    回到首頁
+                </button>
             </div>
         </div>
     </div>
