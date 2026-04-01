@@ -81,7 +81,7 @@ function createChapterCard(title, fileName, wordCount, config, index) {
     card.className = "chapter-card animate-fadeIn group bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full";
     
     card.onclick = () => {
-        window.location.href = `vocabulary-card.html?chapter=${encodeURIComponent(fileName)}`;
+        openChapterModal(title, fileName, wordCount);
     };
 
     const iconBg = `bg-${config.color}-50`;
@@ -133,4 +133,7 @@ function showEmptyState() {
 }
 
 // 初始化
-window.onload = initApp;
+window.onload = () => {
+    setupChapterModalEvents();
+    initApp();
+};

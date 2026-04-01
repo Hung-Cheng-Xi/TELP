@@ -45,6 +45,48 @@
         .animate-fadeIn {
             animation: fadeIn 0.5s ease forwards;
         }
+
+        .modal-open {
+            overflow: hidden;
+        }
+
+        .review-range {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #6366f1 0%, #6366f1 var(--range-progress, 0%), #e2e8f0 var(--range-progress, 0%), #e2e8f0 100%);
+            outline: none;
+        }
+
+        .review-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35);
+            border: 4px solid #ffffff;
+            cursor: pointer;
+        }
+
+        .review-range::-moz-range-thumb {
+            width: 28px;
+            height: 28px;
+            border: 4px solid #ffffff;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35);
+            cursor: pointer;
+        }
+
+        .review-range::-moz-range-track {
+            height: 10px;
+            border-radius: 999px;
+            background: #e2e8f0;
+        }
     </style>
 </head>
 
@@ -101,11 +143,90 @@
         </section>
     </main>
 
+    <div id="chapter-modal"
+        class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-3 sm:px-4 py-4 sm:py-6">
+        <div id="chapter-modal-panel"
+            class="w-full max-w-lg lg:max-w-xl rounded-[1.75rem] sm:rounded-[2.25rem] bg-white shadow-[0_30px_90px_rgba(15,23,42,0.2)] border border-white/80 overflow-hidden animate-fadeIn">
+            <div class="px-4 sm:px-6 lg:px-7 pt-4 sm:pt-6 lg:pt-7 pb-4 sm:pb-5">
+                <div class="flex items-start justify-between gap-3 sm:gap-4">
+                    <div>
+                        <h3 class="text-xl sm:text-2xl lg:text-[1.9rem] leading-none font-extrabold tracking-tight text-slate-800">複習設定</h3>
+                        <p id="modal-title" class="text-base sm:text-lg lg:text-xl font-bold text-indigo-500 mt-1.5 sm:mt-2">第二章-tablet</p>
+                    </div>
+                    <button id="modal-close-btn"
+                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition text-sm sm:text-base shrink-0"
+                        type="button" aria-label="關閉設定視窗">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <section class="mt-5 sm:mt-6">
+                    <div class="flex items-center justify-between mb-3 sm:mb-4 gap-3">
+                        <label for="word-count-range" class="text-base sm:text-lg lg:text-xl font-bold text-slate-700">複習題數</label>
+                        <span id="word-count-value"
+                            class="min-w-[72px] sm:min-w-[84px] text-center text-sm sm:text-base lg:text-lg font-extrabold bg-indigo-50 text-indigo-600 px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl">20 題</span>
+                    </div>
+                    <input id="word-count-range" type="range" min="1" max="10" value="10" step="1"
+                        class="review-range cursor-pointer">
+                    <div class="mt-2.5 sm:mt-3 flex items-center justify-between text-slate-400 font-bold text-xs sm:text-sm lg:text-base">
+                        <span id="word-count-min-label">最小: 5</span>
+                        <span id="word-count-max-label">最大: 65</span>
+                    </div>
+                    <div class="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                        <button type="button" data-count-preset="10"
+                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] border border-slate-200 bg-white text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold hover:border-indigo-300 hover:text-indigo-600 transition shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
+                            10 題
+                        </button>
+                        <button type="button" data-count-preset="20"
+                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] border border-slate-200 bg-white text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold hover:border-indigo-300 hover:text-indigo-600 transition shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
+                            20 題
+                        </button>
+                        <button type="button" data-count-preset="all"
+                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] border border-slate-200 bg-white text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold hover:border-indigo-300 hover:text-indigo-600 transition shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
+                            全部
+                        </button>
+                    </div>
+                </section>
+
+                <section class="mt-5 sm:mt-6">
+                    <div
+                        class="flex items-center justify-between gap-3 rounded-[1.25rem] sm:rounded-[1.5rem] border border-slate-200 bg-slate-50 px-3.5 sm:px-4 py-3.5 sm:py-4 shadow-[0_18px_50px_rgba(148,163,184,0.08)]">
+                        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                            <div class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[0.9rem] sm:rounded-[1rem] bg-white shadow-[0_12px_30px_rgba(148,163,184,0.15)] flex items-center justify-center text-base sm:text-lg lg:text-xl text-indigo-500 shrink-0">
+                                <i class="fa-solid fa-shuffle"></i>
+                            </div>
+                            <div class="min-w-0">
+                                <p class="text-sm sm:text-base lg:text-lg leading-tight font-extrabold text-slate-700">隨機選題模式</p>
+                                <p class="text-slate-400 mt-0.5 text-[11px] sm:text-xs lg:text-sm font-semibold">打亂單字順序進行測驗</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input id="random-toggle" type="checkbox" class="sr-only peer">
+                            <div
+                                class="w-14 h-8 sm:w-16 sm:h-9 lg:w-[4.5rem] lg:h-10 bg-indigo-100 rounded-full peer peer-checked:bg-indigo-600 transition-colors after:content-[''] after:absolute after:top-1 after:left-1 after:w-6 after:h-6 sm:after:w-7 sm:after:h-7 lg:after:w-8 lg:after:h-8 after:bg-white after:rounded-full after:transition-transform after:shadow-md peer-checked:after:translate-x-6 sm:peer-checked:after:translate-x-7 lg:peer-checked:after:translate-x-8 shrink-0">
+                            </div>
+                        </label>
+                    </div>
+                </section>
+
+                <p id="modal-subtitle" class="mt-3 sm:mt-4 text-slate-400 text-[11px] sm:text-xs lg:text-sm font-medium">請選擇這次要練習的單字數量與出題方式。</p>
+
+                <div class="mt-5 sm:mt-6 pb-1">
+                <button id="modal-confirm-btn" type="button"
+                    class="w-full px-6 py-3 sm:py-3.5 lg:py-4 rounded-[1.25rem] sm:rounded-[1.5rem] bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white text-base sm:text-lg lg:text-xl font-extrabold hover:opacity-95 transition shadow-[0_24px_60px_rgba(99,102,241,0.35)]">
+                    開始複習之旅
+                </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer class="mt-20 py-10 border-t border-slate-200 text-center text-slate-400 text-sm">
-        <p>© 2024 單字學習艙 VocabCabin. 檔案讀取自 ./static/data/</p>
+        <p>© 2026 單字學習艙 VocabCabin. 檔案讀取自 ./static/data/</p>
     </footer>
 
 </body>
+<script src="./static/js/chapter-modal.js"></script>
 <script src="./static/js/index.js"></script>
 <script src="./static/js/location.js"></script>
 <script src="./static/js/pwa.js"></script>

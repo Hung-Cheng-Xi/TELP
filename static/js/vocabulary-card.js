@@ -2,6 +2,10 @@
 let isFlipped = false;
 let currentWordIndex = 0;
 let wordData = []; // 動態載入的單字陣列
+let activeSettings = {
+  count: null,
+  random: false,
+};
 
 // --- 預設測試資料 (避免沒有後端/本地檔案時畫面空白) ---
 const fallbackWordData = [
@@ -49,11 +53,45 @@ async function loadChapter(filename) {
     wordData = fallbackWordData;
   }
 
+  wordData = normalizeWordData(wordData);
+  wordData = applyStudySettings(wordData, activeSettings);
+
   // 資料讀取完成後，初始化單字卡到第一個字
   currentWordIndex = 0;
   if (wordData && wordData.length > 0) {
     loadWordData(currentWordIndex);
   }
+}
+
+function normalizeWordData(data) {
+  if (Array.isArray(data)) return data;
+  if (data && Array.isArray(data.words)) return data.words;
+  return fallbackWordData;
+}
+
+function applyStudySettings(words, settings) {
+  let result = [...words];
+
+  if (settings.random) {
+    result = shuffleWords(result);
+  }
+
+  if (Number.isInteger(settings.count) && settings.count > 0) {
+    result = result.slice(0, settings.count);
+  }
+
+  return result.length > 0 ? result : fallbackWordData;
+}
+
+function shuffleWords(words) {
+  const shuffled = [...words];
+
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
+    const randomIndex = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[i]];
+  }
+
+  return shuffled;
 }
 
 // 1. 翻轉卡片
@@ -143,6 +181,13 @@ window.onload = () => {
   // 取得網址列的參數，例如 ?chapter=第一章-科技詞彙.json
   const urlParams = new URLSearchParams(window.location.search);
   const chapterFile = urlParams.get("chapter");
+  const countParam = Number.parseInt(urlParams.get("count") || "", 10);
+  const randomParam = urlParams.get("random");
+
+  activeSettings = {
+    count: Number.isNaN(countParam) ? null : countParam,
+    random: randomParam === "1" || randomParam === "true",
+  };
 
   if (chapterFile) {
     // 如果網址有指定章節，就載入該章節
