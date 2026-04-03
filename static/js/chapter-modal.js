@@ -79,13 +79,10 @@ function updatePresetButtons(selectedValue, maxWordCount) {
         const isActive = presetValue === selectedValue;
 
         button.disabled = isDisabled;
-        button.classList.toggle('bg-indigo-50', isActive && !isDisabled);
-        button.classList.toggle('text-indigo-600', isActive && !isDisabled);
-        button.classList.toggle('border-indigo-300', isActive && !isDisabled);
-        button.classList.toggle('shadow-[0_16px_40px_rgba(99,102,241,0.16)]', isActive && !isDisabled);
+        button.classList.toggle('is-active', isActive && !isDisabled);
         button.classList.toggle('bg-white', !isActive || isDisabled);
         button.classList.toggle('text-slate-600', !isActive && !isDisabled);
-        button.classList.toggle('border-slate-200', !isActive && !isDisabled);
+        button.classList.toggle('text-slate-300', isDisabled);
         button.classList.toggle('opacity-40', isDisabled);
         button.classList.toggle('cursor-not-allowed', isDisabled);
     });

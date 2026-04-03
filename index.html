@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>單字學習艙 - 英文學習系統</title>
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#f8fafc">
     <meta name="description" content="可安裝、可離線使用的英文單字學習工具。">
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="./static/icons/icon-192.svg" type="image/svg+xml">
@@ -17,12 +17,62 @@
     <!-- Google Fonts: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        :root {
+            color-scheme: light;
+            --background: #f5f7fb;
+            --foreground: #0f172a;
+            --muted: #64748b;
+            --muted-soft: #94a3b8;
+            --card: rgba(255, 255, 255, 0.9);
+            --card-strong: #ffffff;
+            --border: rgba(15, 23, 42, 0.08);
+            --border-strong: rgba(15, 23, 42, 0.12);
+            --accent: #0f172a;
+            --accent-soft: #eef2ff;
+            --primary: #111827;
+            --primary-soft: #f1f5f9;
+            --ring: rgba(15, 23, 42, 0.08);
+            --shadow: 0 22px 60px rgba(15, 23, 42, 0.08);
+            --shadow-lg: 0 26px 80px rgba(15, 23, 42, 0.14);
         }
 
-        .chapter-card:hover .chapter-icon {
-            transform: scale(1.1) rotate(-5deg);
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(245, 247, 251, 0.7) 38%, rgba(245, 247, 251, 1) 70%),
+                linear-gradient(180deg, #fbfcfe 0%, #f5f7fb 100%);
+        }
+
+        .app-shell {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .app-shell::before,
+        .app-shell::after {
+            content: "";
+            position: fixed;
+            border-radius: 999px;
+            filter: blur(60px);
+            opacity: 0.55;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .app-shell::before {
+            width: 18rem;
+            height: 18rem;
+            top: 4rem;
+            left: -4rem;
+            background: rgba(191, 219, 254, 0.55);
+        }
+
+        .app-shell::after {
+            width: 20rem;
+            height: 20rem;
+            top: 8rem;
+            right: -6rem;
+            background: rgba(226, 232, 240, 0.9);
         }
 
         .chapter-icon {
@@ -46,61 +96,104 @@
             animation: fadeIn 0.5s ease forwards;
         }
 
-        .modal-open {
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.74);
+            border-color: rgba(15, 23, 42, 0.06);
+            box-shadow: 0 8px 36px rgba(15, 23, 42, 0.04);
+        }
+
+        .hero-panel,
+        .section-panel,
+        .chapter-card-surface,
+        .modal-surface,
+        .count-preset-btn {
+            border: 1px solid var(--border);
+            background: var(--card);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .chapter-card:hover .chapter-icon {
+            transform: scale(1.04);
+        }
+
+        .modal-open,
+        .sheet-open {
             overflow: hidden;
+        }
+
+        .section-heading-line {
+            background: linear-gradient(180deg, rgba(148, 163, 184, 0.18), rgba(148, 163, 184, 0.06));
         }
 
         .review-range {
             -webkit-appearance: none;
             appearance: none;
             width: 100%;
-            height: 10px;
+            height: 8px;
             border-radius: 999px;
-            background: linear-gradient(90deg, #6366f1 0%, #6366f1 var(--range-progress, 0%), #e2e8f0 var(--range-progress, 0%), #e2e8f0 100%);
+            background: linear-gradient(90deg, #111827 0%, #111827 var(--range-progress, 0%), #e2e8f0 var(--range-progress, 0%), #e2e8f0 100%);
             outline: none;
         }
 
         .review-range::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border-radius: 999px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35);
+            background: #ffffff;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
             border: 4px solid #ffffff;
             cursor: pointer;
         }
 
         .review-range::-moz-range-thumb {
-            width: 28px;
-            height: 28px;
+            width: 24px;
+            height: 24px;
             border: 4px solid #ffffff;
             border-radius: 999px;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            box-shadow: 0 10px 24px rgba(99, 102, 241, 0.35);
+            background: #ffffff;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.16);
             cursor: pointer;
         }
 
         .review-range::-moz-range-track {
-            height: 10px;
+            height: 8px;
             border-radius: 999px;
             background: #e2e8f0;
+        }
+
+        .count-preset-btn {
+            transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .count-preset-btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--border-strong);
+        }
+
+        .count-preset-btn.is-active {
+            background: #111827;
+            color: #ffffff;
+            border-color: #111827;
+            box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
         }
     </style>
 </head>
 
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body class="app-shell text-slate-800 min-h-screen">
 
     <!-- 頂部導覽列 (Navbar) -->
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200">
+    <nav class="sticky top-0 z-50 glass-nav backdrop-blur-xl border-b">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 items-center">
                 <!-- Left: Logo -->
                 <div class="flex items-center space-x-3">
                     <div
-                        class="bg-indigo-600 h-10 w-10 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-                        <i class="fa-solid fa-layer-group text-white text-lg"></i>
+                        class="bg-slate-950 h-10 w-10 rounded-2xl flex items-center justify-center shadow-[0_18px_40px_rgba(15,23,42,0.16)]">
+                        <i class="fa-solid fa-layer-group text-white text-base"></i>
                     </div>
                     <span class="text-xl font-bold tracking-tight text-slate-900">單字學習艙</span>
                 </div>
@@ -115,56 +208,72 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         <!-- 歡迎區塊 (Hero Section) -->
-        <section class="mb-16 text-center">
-            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
-                挑選一個章節開始複習
-            </h1>
-            <p class="text-slate-500 text-lg max-w-2xl mx-auto">
-                系統會自動掃描資料庫中的 JSON 詞庫並顯示單字數量。
-            </p>
+        <section class="mb-10 md:mb-14">
+            <div class="hero-panel rounded-[2rem] sm:rounded-[2.5rem] px-6 py-8 sm:px-9 sm:py-10 lg:px-12 lg:py-12">
+                <div class="max-w-3xl">
+                    <div class="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-3 py-1 text-xs font-semibold tracking-[0.18em] text-slate-500 uppercase shadow-sm">
+                        Study Dashboard
+                    </div>
+                    <h1 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-950">
+                        以更乾淨的節奏，開始今天的單字複習
+                    </h1>
+                    <p class="mt-4 text-slate-500 text-base sm:text-lg max-w-2xl leading-7">
+                        章節列表會自動讀取 JSON 詞庫。整體介面現在統一成更像 shadcn-ui 與 iOS 的簡潔卡片層次，讓選章與設定都更直覺。
+                    </p>
+                </div>
+            </div>
         </section>
 
         <!-- 章節選擇網格 (Chapter Grid) -->
         <section>
-            <div class="flex items-center justify-between mb-8 border-l-4 border-indigo-500 pl-4">
-                <h2 class="text-2xl font-bold text-slate-900">所有章節</h2>
-                <span id="chapter-count"
-                    class="text-sm font-medium bg-slate-200 text-slate-600 px-3 py-1 rounded-full">掃描中...</span>
-            </div>
+            <div class="section-panel rounded-[1.75rem] sm:rounded-[2rem] p-5 sm:p-6 lg:p-7">
+                <div class="flex items-center justify-between mb-6 gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="section-heading-line h-12 w-1 rounded-full"></div>
+                        <div>
+                            <h2 class="text-2xl font-bold tracking-tight text-slate-950">所有章節</h2>
+                            <p class="text-sm text-slate-400 mt-1">選擇一個主題，進入本輪單字練習。</p>
+                        </div>
+                    </div>
+                    <span id="chapter-count"
+                        class="text-sm font-medium bg-slate-900 text-white px-3 py-1.5 rounded-full shadow-sm">掃描中...</span>
+                </div>
 
-            <div id="chapter-grid"
-                class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center sm:text-left">
-                <!-- 預設骨架屏 -->
-                <div id="loading-skeleton"
-                    class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm animate-pulse lg:col-span-3">
-                    <div class="h-10 bg-slate-100 rounded w-1/4 mx-auto sm:mx-0"></div>
+                <div id="chapter-grid"
+                    class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 sm:gap-6 text-center sm:text-left">
+                    <!-- 預設骨架屏 -->
+                    <div id="loading-skeleton"
+                        class="chapter-card-surface p-8 rounded-[1.75rem] animate-pulse xl:col-span-3">
+                        <div class="h-10 bg-slate-100 rounded-2xl w-1/4 mx-auto sm:mx-0"></div>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
 
     <div id="chapter-modal"
-        class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-900/50 backdrop-blur-sm px-3 sm:px-4 py-4 sm:py-6">
+        class="fixed inset-0 z-[60] hidden items-center justify-center bg-slate-950/28 backdrop-blur-md px-3 sm:px-4 py-4 sm:py-6">
         <div id="chapter-modal-panel"
-            class="w-full max-w-lg lg:max-w-xl rounded-[1.75rem] sm:rounded-[2.25rem] bg-white shadow-[0_30px_90px_rgba(15,23,42,0.2)] border border-white/80 overflow-hidden animate-fadeIn">
+            class="modal-surface w-full max-w-lg lg:max-w-xl rounded-[1.9rem] sm:rounded-[2.25rem] overflow-hidden animate-fadeIn">
             <div class="px-4 sm:px-6 lg:px-7 pt-4 sm:pt-6 lg:pt-7 pb-4 sm:pb-5">
                 <div class="flex items-start justify-between gap-3 sm:gap-4">
                     <div>
-                        <h3 class="text-xl sm:text-2xl lg:text-[1.9rem] leading-none font-extrabold tracking-tight text-slate-800">複習設定</h3>
-                        <p id="modal-title" class="text-base sm:text-lg lg:text-xl font-bold text-indigo-500 mt-1.5 sm:mt-2">第二章-tablet</p>
+                        <p class="text-[11px] sm:text-xs tracking-[0.22em] uppercase font-bold text-slate-400">Review Setup</p>
+                        <h3 class="text-xl sm:text-2xl lg:text-[1.9rem] leading-none font-extrabold tracking-tight text-slate-900 mt-2">複習設定</h3>
+                        <p id="modal-title" class="text-base sm:text-lg lg:text-xl font-bold text-slate-500 mt-2">第二章-tablet</p>
                     </div>
                     <button id="modal-close-btn"
-                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition text-sm sm:text-base shrink-0"
+                        class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-slate-100/90 text-slate-400 hover:bg-slate-200 hover:text-slate-700 transition text-sm sm:text-base shrink-0 border border-slate-200"
                         type="button" aria-label="關閉設定視窗">
                         <i class="fa-solid fa-xmark"></i>
                     </button>
                 </div>
 
-                <section class="mt-5 sm:mt-6">
+                <section class="mt-5 sm:mt-6 rounded-[1.6rem] border border-slate-200 bg-white/80 p-4 sm:p-5 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
                     <div class="flex items-center justify-between mb-3 sm:mb-4 gap-3">
-                        <label for="word-count-range" class="text-base sm:text-lg lg:text-xl font-bold text-slate-700">複習題數</label>
+                        <label for="word-count-range" class="text-base sm:text-lg lg:text-xl font-bold text-slate-800">複習題數</label>
                         <span id="word-count-value"
-                            class="min-w-[72px] sm:min-w-[84px] text-center text-sm sm:text-base lg:text-lg font-extrabold bg-indigo-50 text-indigo-600 px-3 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl">20 題</span>
+                            class="min-w-[72px] sm:min-w-[84px] text-center text-sm sm:text-base lg:text-lg font-extrabold bg-slate-900 text-white px-3 py-1.5 sm:py-2 rounded-2xl">20 題</span>
                     </div>
                     <input id="word-count-range" type="range" min="1" max="10" value="10" step="1"
                         class="review-range cursor-pointer">
@@ -174,15 +283,15 @@
                     </div>
                     <div class="mt-4 sm:mt-5 grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                         <button type="button" data-count-preset="10"
-                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] border border-slate-200 bg-white text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold hover:border-indigo-300 hover:text-indigo-600 transition shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
+                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold">
                             10 題
                         </button>
                         <button type="button" data-count-preset="20"
-                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] border border-slate-200 bg-white text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold hover:border-indigo-300 hover:text-indigo-600 transition shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
+                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold">
                             20 題
                         </button>
                         <button type="button" data-count-preset="all"
-                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] border border-slate-200 bg-white text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold hover:border-indigo-300 hover:text-indigo-600 transition shadow-[0_8px_30px_rgba(148,163,184,0.08)]">
+                            class="count-preset-btn px-4 py-2.5 sm:py-3 rounded-xl sm:rounded-[1.25rem] text-slate-600 text-sm sm:text-base lg:text-lg font-extrabold">
                             全部
                         </button>
                     </div>
@@ -190,20 +299,20 @@
 
                 <section class="mt-5 sm:mt-6">
                     <div
-                        class="flex items-center justify-between gap-3 rounded-[1.25rem] sm:rounded-[1.5rem] border border-slate-200 bg-slate-50 px-3.5 sm:px-4 py-3.5 sm:py-4 shadow-[0_18px_50px_rgba(148,163,184,0.08)]">
+                        class="flex items-center justify-between gap-3 rounded-[1.25rem] sm:rounded-[1.5rem] border border-slate-200 bg-white/80 px-3.5 sm:px-4 py-3.5 sm:py-4 shadow-[0_10px_30px_rgba(15,23,42,0.06)]">
                         <div class="flex items-center gap-3 sm:gap-4 min-w-0">
-                            <div class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[0.9rem] sm:rounded-[1rem] bg-white shadow-[0_12px_30px_rgba(148,163,184,0.15)] flex items-center justify-center text-base sm:text-lg lg:text-xl text-indigo-500 shrink-0">
+                            <div class="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-[0.9rem] sm:rounded-[1rem] bg-slate-900 text-white shadow-[0_12px_30px_rgba(15,23,42,0.14)] flex items-center justify-center text-base sm:text-lg lg:text-xl shrink-0">
                                 <i class="fa-solid fa-shuffle"></i>
                             </div>
                             <div class="min-w-0">
-                                <p class="text-sm sm:text-base lg:text-lg leading-tight font-extrabold text-slate-700">隨機選題模式</p>
+                                <p class="text-sm sm:text-base lg:text-lg leading-tight font-extrabold text-slate-800">隨機選題模式</p>
                                 <p class="text-slate-400 mt-0.5 text-[11px] sm:text-xs lg:text-sm font-semibold">打亂單字順序進行測驗</p>
                             </div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input id="random-toggle" type="checkbox" class="sr-only peer">
                             <div
-                                class="w-14 h-8 sm:w-16 sm:h-9 lg:w-[4.5rem] lg:h-10 bg-indigo-100 rounded-full peer peer-checked:bg-indigo-600 transition-colors after:content-[''] after:absolute after:top-1 after:left-1 after:w-6 after:h-6 sm:after:w-7 sm:after:h-7 lg:after:w-8 lg:after:h-8 after:bg-white after:rounded-full after:transition-transform after:shadow-md peer-checked:after:translate-x-6 sm:peer-checked:after:translate-x-7 lg:peer-checked:after:translate-x-8 shrink-0">
+                                class="w-14 h-8 sm:w-16 sm:h-9 lg:w-[4.5rem] lg:h-10 bg-slate-200 rounded-full peer peer-checked:bg-slate-900 transition-colors after:content-[''] after:absolute after:top-1 after:left-1 after:w-6 after:h-6 sm:after:w-7 sm:after:h-7 lg:after:w-8 lg:after:h-8 after:bg-white after:rounded-full after:transition-transform after:shadow-md peer-checked:after:translate-x-6 sm:peer-checked:after:translate-x-7 lg:peer-checked:after:translate-x-8 shrink-0">
                             </div>
                         </label>
                     </div>
@@ -213,7 +322,7 @@
 
                 <div class="mt-5 sm:mt-6 pb-1">
                 <button id="modal-confirm-btn" type="button"
-                    class="w-full px-6 py-3 sm:py-3.5 lg:py-4 rounded-[1.25rem] sm:rounded-[1.5rem] bg-gradient-to-r from-indigo-500 to-fuchsia-500 text-white text-base sm:text-lg lg:text-xl font-extrabold hover:opacity-95 transition shadow-[0_24px_60px_rgba(99,102,241,0.35)]">
+                    class="w-full px-6 py-3 sm:py-3.5 lg:py-4 rounded-[1.25rem] sm:rounded-[1.5rem] bg-slate-900 text-white text-base sm:text-lg lg:text-xl font-extrabold hover:bg-slate-800 transition shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
                     開始複習之旅
                 </button>
                 </div>

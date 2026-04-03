@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>質感單字卡 UI</title>
-    <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" content="#f5f7fb">
     <meta name="description" content="翻卡式英文單字練習，支援安裝與離線使用。">
     <link rel="manifest" href="./manifest.webmanifest">
     <link rel="icon" href="./static/icons/icon-192.svg" type="image/svg+xml">
@@ -13,8 +13,63 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- 引入 FontAwesome 圖示 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            color-scheme: light;
+            --background: #f5f7fb;
+            --foreground: #0f172a;
+            --muted: #64748b;
+            --muted-soft: #94a3b8;
+            --card: rgba(255, 255, 255, 0.88);
+            --card-strong: #ffffff;
+            --border: rgba(15, 23, 42, 0.08);
+            --border-strong: rgba(15, 23, 42, 0.12);
+            --shadow-sm: 0 12px 30px rgba(15, 23, 42, 0.06);
+            --shadow: 0 24px 70px rgba(15, 23, 42, 0.09);
+            --shadow-lg: 0 32px 80px rgba(15, 23, 42, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.96), rgba(245, 247, 251, 0.72) 40%, rgba(245, 247, 251, 1) 78%),
+                linear-gradient(180deg, #fbfcfe 0%, #f5f7fb 100%);
+        }
+
+        .study-shell {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .study-shell::before,
+        .study-shell::after {
+            content: "";
+            position: fixed;
+            border-radius: 999px;
+            filter: blur(64px);
+            opacity: 0.5;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .study-shell::before {
+            width: 18rem;
+            height: 18rem;
+            top: 2rem;
+            left: -4rem;
+            background: rgba(191, 219, 254, 0.45);
+        }
+
+        .study-shell::after {
+            width: 22rem;
+            height: 22rem;
+            right: -6rem;
+            bottom: 2rem;
+            background: rgba(226, 232, 240, 0.9);
+        }
+
         /* 3D 翻轉核心設定 */
         .perspective-1000 {
             perspective: 1000px;
@@ -39,6 +94,18 @@
             touch-action: pan-y;
         }
 
+        .glass-panel,
+        .flashcard-surface,
+        .content-panel,
+        .review-summary-panel,
+        .floating-button {
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: var(--shadow);
+        }
+
         .card-shell.swipe-left::after,
         .card-shell.swipe-right::after {
             position: absolute;
@@ -55,15 +122,15 @@
         .card-shell.swipe-left::after {
             content: "NOT YET";
             left: 1.5rem;
-            background: linear-gradient(135deg, #f97316, #ef4444);
-            box-shadow: 0 14px 28px rgba(239, 68, 68, 0.25);
+            background: #f97316;
+            box-shadow: 0 14px 28px rgba(249, 115, 22, 0.22);
         }
 
         .card-shell.swipe-right::after {
             content: "MASTERED";
             right: 1.5rem;
-            background: linear-gradient(135deg, #22c55e, #14b8a6);
-            box-shadow: 0 14px 28px rgba(34, 197, 94, 0.22);
+            background: #0f172a;
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.18);
         }
 
         .card-shell.is-animating {
@@ -89,7 +156,7 @@
             width: 6px;
         }
         .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1; 
+            background: #f1f5f9; 
             border-radius: 4px;
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
@@ -157,93 +224,104 @@
                 font-size: clamp(1.7rem, 2.4vw, 2.25rem);
             }
         }
+
+        .progress-pill {
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .status-floating {
+            background: rgba(255, 255, 255, 0.76);
+            border: 1px solid rgba(255, 255, 255, 0.78);
+            box-shadow: 0 18px 48px rgba(15, 23, 42, 0.1);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
     </style>
 </head>
-<body class="bg-slate-100 h-screen overflow-hidden flex flex-col items-center justify-center p-3 md:p-5 font-sans text-slate-800">
+<body class="study-shell h-screen overflow-hidden flex flex-col items-center justify-center p-3 md:p-5 text-slate-800">
 
-    <div class="w-full max-w-5xl mb-3 md:mb-4">
-        <div class="relative flex items-center justify-center min-h-12">
-            <button id="exit-button" type="button" class="absolute left-0 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-sm transition hover:text-slate-800 hover:shadow" title="離開">
-                <i class="fa-solid fa-xmark text-lg"></i>
-            </button>
-            <span id="word-counter" class="text-slate-500 font-bold text-base md:text-lg whitespace-nowrap text-center tracking-[0.18em]">
-                1 / 1
-            </span>
+    <div class="perspective-1000 w-full max-w-5xl h-[calc(100vh-1.5rem)] md:h-[calc(100vh-2.5rem)] max-h-[860px] min-h-[540px] relative">
+        <button id="exit-button" type="button" class="absolute left-3 top-3 md:left-5 md:top-5 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white/90 text-slate-500 shadow-sm transition hover:text-slate-800 hover:shadow" title="離開">
+            <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+
+        <div class="absolute top-3 left-1/2 z-30 -translate-x-1/2 md:top-5">
+            <div class="status-floating flex items-center gap-2 rounded-full px-2.5 py-2 md:px-3">
+                <span id="word-counter" class="rounded-full bg-slate-900 px-3 py-1.5 text-xs md:text-sm font-bold tracking-[0.16em] text-white whitespace-nowrap">
+                    1 / 1
+                </span>
+                <span id="unknown-count-chip" class="progress-pill rounded-full px-3 py-1.5 text-xs md:text-sm font-semibold text-orange-700 whitespace-nowrap">
+                    不會 0
+                </span>
+                <span id="known-count-chip" class="progress-pill rounded-full px-3 py-1.5 text-xs md:text-sm font-semibold text-slate-700 whitespace-nowrap">
+                    會 0
+                </span>
+            </div>
         </div>
-
-        <div class="mt-3 flex items-center justify-center gap-2 md:gap-3">
-            <span id="unknown-count-chip" class="rounded-full border border-orange-100 bg-orange-50 px-3 py-1.5 text-xs md:text-sm font-semibold text-orange-700">
-                不會 0
-            </span>
-            <span id="known-count-chip" class="rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-xs md:text-sm font-semibold text-emerald-700">
-                會 0
-            </span>
-        </div>
-    </div>
-
-    <div class="perspective-1000 w-full max-w-5xl h-[calc(100vh-9.5rem)] md:h-[calc(100vh-10rem)] max-h-[760px] min-h-[480px] relative">
         
         <!-- 卡片翻轉主體 -->
-        <div id="card-shell" class="card-shell w-full h-full relative">
-        <div id="flashcard" class="card-inner w-full h-full relative transform-style-3d shadow-xl rounded-2xl">
+        <div id="card-shell" class="card-shell w-full h-full relative pt-14 md:pt-16">
+        <div id="flashcard" class="card-inner w-full h-full relative transform-style-3d rounded-[2rem]">
             
             <!-- ================= 正面 (單字回想區) ================= -->
-            <div class="absolute inset-0 w-full h-full backface-hidden bg-white rounded-2xl border border-slate-100 flex flex-col items-center justify-center cursor-pointer" onclick="flipCard()">
+            <div class="flashcard-surface absolute inset-0 w-full h-full backface-hidden rounded-[2rem] flex flex-col items-center justify-center cursor-pointer" onclick="flipCard()">
                 <div class="text-center flex flex-col items-center w-full px-5 sm:px-8 md:px-10">
                     <div class="inline-flex max-w-full flex-col items-center">
-                        <p class="text-slate-400 font-medium mb-4 uppercase tracking-widest text-sm">Tap to reveal</p>
+                        <div class="inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-5">Tap to reveal</div>
                         <div class="inline-flex max-w-full items-center justify-center gap-2 md:gap-3">
                             <h2 id="front-word" class="word-display word-size-default min-w-0 font-extrabold text-slate-800 tracking-tight text-center">Loading...</h2>
                         <!-- 🌟 正面：單字發音按鈕 🌟 -->
-                            <button onclick="speakText('front-word', event)" class="shrink-0 self-center text-slate-300 hover:text-indigo-500 transition-colors p-1.5 md:p-2" title="聆聽單字發音">
+                            <button onclick="speakText('front-word', event)" class="shrink-0 self-center text-slate-300 hover:text-slate-700 transition-colors p-1.5 md:p-2" title="聆聽單字發音">
                                 <i class="fa-solid fa-volume-high text-2xl md:text-4xl"></i>
                             </button>
                         </div>
                     </div>
-                    <p class="mt-6 text-slate-400"><i class="fa-solid fa-rotate text-2xl animate-pulse"></i></p>
+                    <p class="mt-8 text-slate-400 text-sm font-medium">點一下翻面，左右滑動分類</p>
                 </div>
             </div>
 
             <!-- ================= 背面 (詳細資訊區) ================= -->
-            <div class="absolute inset-0 w-full h-full backface-hidden bg-white rounded-2xl border border-slate-100 rotate-y-180 flex flex-col overflow-hidden">
+            <div class="flashcard-surface absolute inset-0 w-full h-full backface-hidden rounded-[2rem] rotate-y-180 flex flex-col overflow-hidden">
                 
                 <!-- 頂部 Header：單字、詞性、中文意思 -->
-                <div class="bg-slate-50 border-b border-slate-100 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer" onclick="flipCard()">
+                <div class="bg-slate-50/90 border-b border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer" onclick="flipCard()">
                     <div class="w-full min-w-0">
                         <div class="flex items-end gap-2 sm:gap-3 mb-1 w-full min-w-0">
                             <h2 id="back-word" class="back-word-display word-display word-size-long min-w-0 font-bold text-slate-800">Loading...</h2>
-                            <span id="pos" class="px-3 py-1 bg-indigo-100 text-indigo-700 text-sm font-semibold rounded-md mb-1">...</span>
+                            <span id="pos" class="px-3 py-1 bg-slate-900 text-white text-sm font-semibold rounded-full mb-1">...</span>
                             <!-- 🌟 背面：單字發音按鈕 🌟 -->
-                            <button onclick="speakText('back-word', event)" class="mb-1.5 w-8 h-8 shrink-0 flex items-center justify-center rounded-full bg-slate-200/60 text-slate-500 hover:bg-indigo-100 hover:text-indigo-600 transition-colors" title="聆聽單字發音">
+                            <button onclick="speakText('back-word', event)" class="mb-1.5 w-8 h-8 shrink-0 flex items-center justify-center rounded-full bg-white text-slate-500 hover:text-slate-900 transition-colors border border-slate-200" title="聆聽單字發音">
                                 <i class="fa-solid fa-volume-high text-sm"></i>
                             </button>
                         </div>
-                        <h3 id="meaning" class="text-xl text-slate-600 font-medium zh-text">載入中...</h3>
+                        <h3 id="meaning" class="text-xl text-slate-600 font-medium zh-text leading-8">載入中...</h3>
                     </div>
-                    <div class="text-slate-400 hover:text-indigo-500 transition-colors" title="翻轉回正面">
+                    <div class="text-slate-400 hover:text-slate-700 transition-colors" title="翻轉回正面">
                         <i class="fa-solid fa-rotate-left text-xl"></i>
                     </div>
                 </div>
 
                 <!-- 內容區塊 (Grid Layout 切割版面，避免擁擠) -->
-                <div class="flex-1 p-6 grid grid-cols-1 md:grid-cols-12 gap-6 overflow-y-auto custom-scrollbar bg-white">
+                <div class="flex-1 p-6 grid grid-cols-1 md:grid-cols-12 gap-6 overflow-y-auto custom-scrollbar bg-white/40">
                     
                     <!-- 左側欄：記憶連結 (佔 5 格) -->
                     <div class="md:col-span-5 flex flex-col">
                         
                         <!-- 統一的記憶筆記區塊 -->
-                        <div class="bg-gradient-to-br from-indigo-50/80 to-slate-50 border border-indigo-100/50 rounded-2xl p-5 md:p-6 flex-1 relative overflow-hidden shadow-inner flex flex-col justify-start">
+                        <div class="content-panel rounded-[1.6rem] p-5 md:p-6 flex-1 relative overflow-hidden flex flex-col justify-start">
                             
                             <!-- 裝飾性浮水印圖示 (填補視覺空白) -->
-                            <i class="fa-solid fa-brain absolute -bottom-8 -right-6 text-[180px] text-indigo-900/[0.03] rotate-12 pointer-events-none"></i>
+                            <i class="fa-solid fa-brain absolute -bottom-8 -right-6 text-[180px] text-slate-900/[0.03] rotate-12 pointer-events-none"></i>
 
-                            <h4 class="text-indigo-800 font-bold text-sm mb-5 flex items-center gap-2 relative z-10">
+                            <h4 class="text-slate-800 font-bold text-sm mb-5 flex items-center gap-2 relative z-10">
                                 <i class="fa-solid fa-wand-magic-sparkles text-amber-500"></i> 記憶筆記
                             </h4>
                             
                             <div class="space-y-4 relative z-10">
                                 <!-- 諧音聯想 -->
-                                <div class="bg-white/80 p-4 rounded-xl border border-white shadow-sm backdrop-blur-sm">
+                                <div class="bg-white/88 p-4 rounded-[1.15rem] border border-slate-200 shadow-sm backdrop-blur-sm">
                                     <h5 class="text-xs font-bold text-amber-600 mb-2 flex items-center gap-2">
                                         <i class="fa-solid fa-lightbulb"></i> 諧音聯想
                                     </h5>
@@ -253,8 +331,8 @@
                                 </div>
 
                                 <!-- 字根拆解 -->
-                                <div class="bg-white/80 p-4 rounded-xl border border-white shadow-sm backdrop-blur-sm">
-                                    <h5 class="text-xs font-bold text-sky-600 mb-2 flex items-center gap-2">
+                                <div class="bg-white/88 p-4 rounded-[1.15rem] border border-slate-200 shadow-sm backdrop-blur-sm">
+                                    <h5 class="text-xs font-bold text-slate-700 mb-2 flex items-center gap-2">
                                         <i class="fa-solid fa-puzzle-piece"></i> 字根拆解
                                     </h5>
                                     <p id="roots" class="text-slate-700 text-sm leading-relaxed zh-text">
@@ -265,7 +343,7 @@
                             
                             <!-- 底部引導留白文字 (穩定視覺重心) -->
                             <div class="mt-auto pt-8 text-center relative z-10 pointer-events-none">
-                                <span class="text-[10px] font-semibold text-indigo-900/20 tracking-[0.2em] uppercase">Memory Hacks</span>
+                                <span class="text-[10px] font-semibold text-slate-900/20 tracking-[0.2em] uppercase">Memory Hacks</span>
                             </div>
                         </div>
                     </div>
@@ -274,40 +352,40 @@
                     <div class="md:col-span-7 flex flex-col">
                         
                         <!-- 例句區塊整體 -->
-                        <div class="bg-slate-50/80 border border-slate-100 rounded-2xl p-5 md:p-6 flex-1 relative overflow-hidden flex flex-col">
+                        <div class="content-panel rounded-[1.6rem] p-5 md:p-6 flex-1 relative overflow-hidden flex flex-col">
                             
                             <!-- 裝飾性背景圖示 (填補視覺空白) -->
                             <i class="fa-solid fa-quote-right absolute -top-6 -right-4 text-[160px] text-slate-200/50 -rotate-12 pointer-events-none"></i>
 
-                            <h4 class="text-slate-600 font-bold text-sm mb-6 flex items-center gap-2 relative z-10">
-                                <i class="fa-solid fa-book-open text-indigo-400"></i> 情境例句
+                            <h4 class="text-slate-700 font-bold text-sm mb-6 flex items-center gap-2 relative z-10">
+                                <i class="fa-solid fa-book-open text-slate-400"></i> 情境例句
                             </h4>
                             
                             <!-- 使用 justify-center 讓例句置中，均勻分配上下空間避免空洞 -->
                             <div class="flex-1 flex flex-col justify-center gap-5 relative z-10">
                                 
                                 <!-- 例句 1 (卡片化設計) -->
-                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 relative group hover:shadow-md transition-shadow">
-                                    <div class="absolute top-4 right-4 text-slate-300 group-hover:text-indigo-400 cursor-pointer transition-colors" title="播放發音" onclick="speakText('ex1-en', event)">
+                                <div class="bg-white/92 p-5 rounded-[1.2rem] shadow-sm border border-slate-200 relative group hover:shadow-md transition-shadow">
+                                    <div class="absolute top-4 right-4 text-slate-300 group-hover:text-slate-700 cursor-pointer transition-colors" title="播放發音" onclick="speakText('ex1-en', event)">
                                         <i class="fa-solid fa-volume-high"></i>
                                     </div>
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[11px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase tracking-wider">Example 1</span>
+                                        <span class="text-[11px] font-bold bg-slate-900 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Example 1</span>
                                     </div>
                                     <p id="ex1-en" class="text-lg text-slate-800 font-medium mb-3 pr-8 leading-relaxed">...</p>
-                                    <p id="ex1-zh" class="text-slate-500 text-sm zh-text border-t border-slate-50 pt-3 mt-1">...</p>
+                                    <p id="ex1-zh" class="text-slate-500 text-sm zh-text border-t border-slate-100 pt-3 mt-1">...</p>
                                 </div>
 
                                 <!-- 例句 2 (卡片化設計) -->
-                                <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-100 relative group hover:shadow-md transition-shadow">
-                                    <div class="absolute top-4 right-4 text-slate-300 group-hover:text-indigo-400 cursor-pointer transition-colors" title="播放發音" onclick="speakText('ex2-en', event)">
+                                <div class="bg-white/92 p-5 rounded-[1.2rem] shadow-sm border border-slate-200 relative group hover:shadow-md transition-shadow">
+                                    <div class="absolute top-4 right-4 text-slate-300 group-hover:text-slate-700 cursor-pointer transition-colors" title="播放發音" onclick="speakText('ex2-en', event)">
                                         <i class="fa-solid fa-volume-high"></i>
                                     </div>
                                     <div class="flex items-center gap-2 mb-2">
-                                        <span class="text-[11px] font-bold bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded uppercase tracking-wider">Example 2</span>
+                                        <span class="text-[11px] font-bold bg-slate-900 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Example 2</span>
                                     </div>
                                     <p id="ex2-en" class="text-lg text-slate-800 font-medium mb-3 pr-8 leading-relaxed">...</p>
-                                    <p id="ex2-zh" class="text-slate-500 text-sm zh-text border-t border-slate-50 pt-3 mt-1">...</p>
+                                    <p id="ex2-zh" class="text-slate-500 text-sm zh-text border-t border-slate-100 pt-3 mt-1">...</p>
                                 </div>
 
                             </div>
@@ -321,21 +399,21 @@
         </div>
     </div>
 
-    <button id="previous-word-button" type="button" class="fixed left-3 bottom-3 md:left-5 md:bottom-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-500 shadow-lg shadow-slate-300/40 transition hover:text-slate-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-40" title="回到上一張單字卡" disabled>
+    <button id="previous-word-button" type="button" class="floating-button fixed left-3 bottom-3 md:left-5 md:bottom-5 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full text-slate-500 transition hover:text-slate-800 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-40" title="回到上一張單字卡" disabled>
         <i class="fa-solid fa-arrow-left text-lg"></i>
     </button>
 
-    <div id="review-summary-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/50 backdrop-blur-sm p-4">
-        <div id="review-summary-panel" class="w-full max-w-xl rounded-[28px] bg-white shadow-2xl shadow-slate-900/20 overflow-hidden">
-            <div class="px-6 md:px-8 pt-7 pb-5 bg-gradient-to-br from-indigo-600 via-indigo-500 to-sky-500 text-white">
-                <p class="text-xs font-bold tracking-[0.25em] uppercase text-white/75 mb-2">Review Summary</p>
+    <div id="review-summary-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/30 backdrop-blur-md p-4">
+        <div id="review-summary-panel" class="review-summary-panel w-full max-w-xl rounded-[28px] overflow-hidden">
+            <div class="px-6 md:px-8 pt-7 pb-5 bg-slate-900 text-white">
+                <p class="text-xs font-bold tracking-[0.25em] uppercase text-white/60 mb-2">Review Summary</p>
                 <h2 class="text-2xl md:text-3xl font-bold">這一輪練習完成了</h2>
-                <p id="summary-message" class="text-sm md:text-base text-white/85 mt-2">你已經完成本輪單字分類。</p>
+                <p id="summary-message" class="text-sm md:text-base text-white/80 mt-2">你已經完成本輪單字分類。</p>
             </div>
 
             <div class="p-6 md:p-8">
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="rounded-2xl border border-slate-200 bg-slate-50/90 p-4">
                         <p class="text-xs font-bold uppercase tracking-[0.18em] text-slate-400 mb-2">複習了多少</p>
                         <p id="summary-reviewed-count" class="text-3xl font-extrabold text-slate-800">0</p>
                     </div>
@@ -343,13 +421,13 @@
                         <p class="text-xs font-bold uppercase tracking-[0.18em] text-orange-400 mb-2">還剩不會</p>
                         <p id="summary-unknown-count" class="text-3xl font-extrabold text-orange-600">0</p>
                     </div>
-                    <div class="rounded-2xl border border-emerald-100 bg-emerald-50 p-4">
-                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-emerald-400 mb-2">完成單字</p>
-                        <p id="summary-known-count" class="text-3xl font-extrabold text-emerald-600">0</p>
+                    <div class="rounded-2xl border border-slate-200 bg-slate-100 p-4">
+                        <p class="text-xs font-bold uppercase tracking-[0.18em] text-slate-400 mb-2">完成單字</p>
+                        <p id="summary-known-count" class="text-3xl font-extrabold text-slate-900">0</p>
                     </div>
                 </div>
 
-                <div class="rounded-2xl bg-slate-50 border border-slate-200 px-4 py-3 text-sm text-slate-600 mb-6">
+                <div class="rounded-2xl bg-slate-50/90 border border-slate-200 px-4 py-3 text-sm text-slate-600 mb-6">
                     <span id="summary-progress-detail">本次共有 0 個單字。</span>
                 </div>
 
@@ -357,7 +435,7 @@
                     <button id="continue-unknown-btn" type="button" class="flex-1 rounded-2xl bg-orange-500 text-white font-semibold px-5 py-3.5 hover:bg-orange-600 transition shadow-lg shadow-orange-200">
                         繼續複習不會的
                     </button>
-                    <button id="restart-review-btn" type="button" class="flex-1 rounded-2xl bg-slate-900 text-white font-semibold px-5 py-3.5 hover:bg-slate-700 transition shadow-lg shadow-slate-300">
+                    <button id="restart-review-btn" type="button" class="flex-1 rounded-2xl bg-slate-900 text-white font-semibold px-5 py-3.5 hover:bg-slate-800 transition shadow-lg shadow-slate-300">
                         重新複習全部
                     </button>
                 </div>

@@ -10,12 +10,12 @@ const LIST_CONFIG = DATA_PATH + 'list.json';
 
 // 樣式池
 const iconPool = [
-    { icon: "fa-laptop-code", color: "indigo" },
-    { icon: "fa-briefcase", color: "blue" },
-    { icon: "fa-tablet-screen-button", color: "purple" },
-    { icon: "fa-plane-departure", color: "teal" },
-    { icon: "fa-heart-pulse", color: "rose" },
-    { icon: "fa-pen-nib", color: "amber" }
+    { icon: "fa-laptop-code", iconWrapClass: "bg-slate-900 text-white" },
+    { icon: "fa-briefcase", iconWrapClass: "bg-slate-100 text-slate-700" },
+    { icon: "fa-tablet-screen-button", iconWrapClass: "bg-blue-50 text-blue-700" },
+    { icon: "fa-plane-departure", iconWrapClass: "bg-emerald-50 text-emerald-700" },
+    { icon: "fa-heart-pulse", iconWrapClass: "bg-rose-50 text-rose-700" },
+    { icon: "fa-pen-nib", iconWrapClass: "bg-amber-50 text-amber-700" }
 ];
 
 async function initApp() {
@@ -78,35 +78,38 @@ function createChapterCard(title, fileName, wordCount, config, index) {
     const grid = document.getElementById('chapter-grid');
     const card = document.createElement('div');
     card.style.animationDelay = `${index * 100}ms`;
-    card.className = "chapter-card animate-fadeIn group bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full";
+    card.className = "chapter-card chapter-card-surface animate-fadeIn group p-6 sm:p-7 rounded-[1.75rem] sm:rounded-[2rem] hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full";
     
     card.onclick = () => {
         openChapterModal(title, fileName, wordCount);
     };
 
-    const iconBg = `bg-${config.color}-50`;
-    const iconText = `text-${config.color}-600`;
-
     card.innerHTML = `
         <div class="mb-8">
-            <div class="chapter-icon w-16 h-16 rounded-2xl ${iconBg} flex items-center justify-center ${iconText} text-2xl shadow-inner mb-6">
+            <div class="chapter-icon w-14 h-14 sm:w-16 sm:h-16 rounded-[1.35rem] ${config.iconWrapClass} flex items-center justify-center text-xl sm:text-2xl shadow-[0_16px_36px_rgba(15,23,42,0.08)] mb-5">
                 <i class="fa-solid ${config.icon}"></i>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-2 group-hover:text-indigo-600 transition-colors">
+            <div class="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-4">
+                Chapter ${index + 1}
+            </div>
+            <h3 class="text-2xl font-bold tracking-tight text-slate-900 mb-2">
                 ${title}
             </h3>
-            <div class="flex items-center text-slate-400 font-medium">
-                <span class="bg-slate-100 px-3 py-1 rounded-full text-xs mr-2">
+            <p class="text-slate-500 leading-6">
+                從這個章節開始，用更專注的卡片式流程完成單字複習。
+            </p>
+            <div class="flex flex-wrap items-center gap-2 text-slate-400 font-medium mt-5">
+                <span class="bg-slate-100 px-3 py-1 rounded-full text-xs">
                     <i class="fa-solid fa-layer-group mr-1"></i> JSON 庫
                 </span>
-                <span class="text-sm">
+                <span class="text-sm rounded-full border border-slate-200 bg-white/80 px-3 py-1">
                     <i class="fa-solid fa-list-check mr-1"></i> ${wordCount} 個單字
                 </span>
             </div>
         </div>
-        <div class="mt-auto pt-6 border-t border-slate-50 flex items-center justify-between text-indigo-600 font-bold">
+        <div class="mt-auto pt-5 border-t border-slate-200/80 flex items-center justify-between text-slate-900 font-bold">
             <span>進入學習</span>
-            <div class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all">
+            <div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center transition-all">
                 <i class="fa-solid fa-chevron-right text-xs"></i>
             </div>
         </div>
@@ -119,12 +122,12 @@ function showEmptyState() {
     const countLabel = document.getElementById('chapter-count');
     grid.className = "block w-full"; 
     grid.innerHTML = `
-        <div class="bg-white rounded-[2.5rem] border border-dashed border-slate-200 p-16 flex flex-col items-center justify-center text-center animate-fadeIn shadow-inner">
-            <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center text-slate-200 text-5xl mb-6">
+        <div class="chapter-card-surface rounded-[2rem] border-dashed p-12 sm:p-16 flex flex-col items-center justify-center text-center animate-fadeIn">
+            <div class="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-300 text-4xl mb-6">
                 <i class="fa-solid fa-folder-open"></i>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-2">目前尚未有章節</h3>
-            <p class="text-slate-400 max-w-md">
+            <h3 class="text-2xl font-bold tracking-tight text-slate-900 mb-2">目前尚未有章節</h3>
+            <p class="text-slate-500 max-w-md leading-7">
                 請確認在 <code class="bg-slate-100 px-1 rounded text-indigo-500">static/data/list.json</code> 中定義了檔案列表。
             </p>
         </div>
