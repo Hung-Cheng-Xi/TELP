@@ -10,12 +10,12 @@ const LIST_CONFIG = DATA_PATH + 'list.json';
 
 // 樣式池
 const iconPool = [
-    { icon: "fa-laptop-code", iconWrapClass: "bg-slate-900 text-white" },
+    { icon: "fa-laptop-code", iconWrapClass: "bg-slate-100 text-slate-700" },
     { icon: "fa-briefcase", iconWrapClass: "bg-slate-100 text-slate-700" },
-    { icon: "fa-tablet-screen-button", iconWrapClass: "bg-blue-50 text-blue-700" },
-    { icon: "fa-plane-departure", iconWrapClass: "bg-emerald-50 text-emerald-700" },
-    { icon: "fa-heart-pulse", iconWrapClass: "bg-rose-50 text-rose-700" },
-    { icon: "fa-pen-nib", iconWrapClass: "bg-amber-50 text-amber-700" }
+    { icon: "fa-tablet-screen-button", iconWrapClass: "bg-slate-100 text-slate-700" },
+    { icon: "fa-plane-departure", iconWrapClass: "bg-slate-100 text-slate-700" },
+    { icon: "fa-heart-pulse", iconWrapClass: "bg-slate-100 text-slate-700" },
+    { icon: "fa-pen-nib", iconWrapClass: "bg-slate-100 text-slate-700" }
 ];
 
 async function initApp() {
@@ -86,7 +86,7 @@ function createChapterCard(title, fileName, wordCount, config, index) {
 
     card.innerHTML = `
         <div class="mb-8">
-            <div class="chapter-icon w-14 h-14 sm:w-16 sm:h-16 rounded-[1.35rem] ${config.iconWrapClass} flex items-center justify-center text-xl sm:text-2xl shadow-[0_16px_36px_rgba(15,23,42,0.08)] mb-5">
+            <div class="chapter-icon hidden sm:flex w-14 h-14 sm:w-16 sm:h-16 rounded-[1.35rem] ${config.iconWrapClass} items-center justify-center text-xl sm:text-2xl shadow-[0_16px_36px_rgba(15,23,42,0.08)] mb-5">
                 <i class="fa-solid ${config.icon}"></i>
             </div>
             <div class="inline-flex items-center rounded-full border border-slate-200 bg-white/80 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400 mb-4">

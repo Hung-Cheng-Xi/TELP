@@ -215,10 +215,10 @@
                         Study Dashboard
                     </div>
                     <h1 class="mt-4 text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-950">
-                        以更乾淨的節奏，開始今天的單字複習
+                        更有效率地開始今天的單字複習
                     </h1>
                     <p class="mt-4 text-slate-500 text-base sm:text-lg max-w-2xl leading-7">
-                        章節列表會自動讀取 JSON 詞庫。整體介面現在統一成更像 shadcn-ui 與 iOS 的簡潔卡片層次，讓選章與設定都更直覺。
+                        依照章節整理單字，自動載入詞庫內容，透過卡片式練習快速複習，集中加強還不熟悉的單字。
                     </p>
                 </div>
             </div>
@@ -227,16 +227,16 @@
         <!-- 章節選擇網格 (Chapter Grid) -->
         <section>
             <div class="section-panel rounded-[1.75rem] sm:rounded-[2rem] p-5 sm:p-6 lg:p-7">
-                <div class="flex items-center justify-between mb-6 gap-4">
-                    <div class="flex items-center gap-4">
-                        <div class="section-heading-line h-12 w-1 rounded-full"></div>
-                        <div>
-                            <h2 class="text-2xl font-bold tracking-tight text-slate-950">所有章節</h2>
-                            <p class="text-sm text-slate-400 mt-1">選擇一個主題，進入本輪單字練習。</p>
+                <div class="mb-6 flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div class="flex min-w-0 items-start gap-3 sm:items-center sm:gap-4">
+                        <div class="section-heading-line h-12 w-1 shrink-0 rounded-full"></div>
+                        <div class="min-w-0">
+                            <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-slate-950">所有章節</h2>
+                            <p class="mt-1 text-sm leading-6 text-slate-400 sm:leading-normal">選擇一個主題，進入本輪單字練習。</p>
                         </div>
                     </div>
                     <span id="chapter-count"
-                        class="text-sm font-medium bg-slate-900 text-white px-3 py-1.5 rounded-full shadow-sm">掃描中...</span>
+                        class="self-start whitespace-nowrap rounded-full bg-slate-900 px-3 py-1.5 text-xs font-medium text-white shadow-sm sm:self-auto sm:text-sm">掃描中...</span>
                 </div>
 
                 <div id="chapter-grid"
