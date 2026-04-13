@@ -44,36 +44,17 @@ const SWIPE_ROTATION_FACTOR = 0.06;
 const SWIPE_ANIMATION_MS = 220;
 const SWIPE_CLICK_SUPPRESS_MS = 320;
 
-// --- 預設測試資料 (避免沒有後端/本地檔案時畫面空白) ---
-const fallbackWordData = [
-  {
-    word: "Tablet",
-    pos: "n.",
-    meaning: "藥片，平板",
-    homophone:
-      "<span class='font-bold'>他不能</span> 👉 他生病了不能出門，需要吃<b>藥片(tablet)</b>。",
-    roots:
-      "源自古法語 <strong>tablete</strong> (小桌子/小石板) 👉 衍伸為片狀物 (藥片/平板電腦)。",
-    ex1En:
-      "He took a <span class='text-indigo-600 font-bold'>tablet</span> for his headache.",
-    ex1Zh: "他吃了一顆藥片來治頭痛。(a small, solid piece of medicine)",
-    ex2En:
-      "Many students use a <span class='text-indigo-600 font-bold'>tablet</span> for online learning.",
-    ex2Zh: "許多學生使用平板電腦進行線上學習。",
-  },
-];
-
 async function loadChapter(filename) {
   try {
     const response = await fetch(`${DATA_PATH}${filename}`);
     if (!response.ok) {
-      throw new Error(`無法載入 ${filename}，將使用預設資料。`);
+      throw new Error(`無法載入 ${filename}`);
     }
 
     wordData = await response.json();
   } catch (error) {
     console.warn(error);
-    wordData = fallbackWordData;
+    wordData = [];
   }
 
   wordData = normalizeWordData(wordData);
@@ -86,14 +67,16 @@ function normalizeWordData(data) {
     ? data
     : data && Array.isArray(data.words)
       ? data.words
-      : fallbackWordData;
+      : [];
 
-  return sourceData.map((item, index) => ({
-    ...item,
-    id:
-      item.id ||
-      `${item.word || "word"}-${item.meaning || "meaning"}-${index}`,
-  }));
+  return sourceData
+    .filter((item) => item && item.word && item.meaning)
+    .map((item, index) => ({
+      ...item,
+      id:
+        item.id ||
+        `${item.word || "word"}-${item.meaning || "meaning"}-${index}`,
+    }));
 }
 
 function applyStudySettings(words, settings) {
@@ -107,7 +90,7 @@ function applyStudySettings(words, settings) {
     result = result.slice(0, settings.count);
   }
 
-  return result.length > 0 ? result : normalizeWordData(fallbackWordData);
+  return result;
 }
 
 function shuffleWords(words) {
@@ -134,6 +117,8 @@ function resetStudySession(words) {
 
   if (wordData.length > 0) {
     loadWordData(currentWordIndex);
+  } else {
+    showEmptyStudyState();
   }
 
   updateProgressChips();
@@ -217,6 +202,34 @@ function loadWordData(index) {
   if (ex1Zh) ex1Zh.innerHTML = data.ex1Zh || "";
   if (ex2En) ex2En.innerHTML = data.ex2En || "";
   if (ex2Zh) ex2Zh.innerHTML = data.ex2Zh || "";
+}
+
+function showEmptyStudyState() {
+  const wordCounter = document.getElementById("word-counter");
+  const frontWord = document.getElementById("front-word");
+  const backWord = document.getElementById("back-word");
+  const pos = document.getElementById("pos");
+  const meaning = document.getElementById("meaning");
+  const homophone = document.getElementById("homophone");
+  const roots = document.getElementById("roots");
+  const ex1En = document.getElementById("ex1-en");
+  const ex1Zh = document.getElementById("ex1-zh");
+  const ex2En = document.getElementById("ex2-en");
+  const ex2Zh = document.getElementById("ex2-zh");
+
+  if (wordCounter) wordCounter.innerText = "0 / 0";
+  if (frontWord) frontWord.innerText = "沒有可用的單字資料";
+  if (backWord) backWord.innerText = "沒有可用的單字資料";
+  applyWordSize("front-word", "沒有可用的單字資料");
+  applyWordSize("back-word", "沒有可用的單字資料");
+  if (pos) pos.innerText = "...";
+  if (meaning) meaning.innerText = "請確認 static/data 中的章節 JSON 是否存在且包含 word 與 meaning。";
+  if (homophone) homophone.innerText = "此頁只會讀取 static/data 的章節檔。";
+  if (roots) roots.innerText = "請回到首頁選擇其他章節，或補上對應資料檔。";
+  if (ex1En) ex1En.innerText = "";
+  if (ex1Zh) ex1Zh.innerText = "";
+  if (ex2En) ex2En.innerText = "";
+  if (ex2Zh) ex2Zh.innerText = "";
 }
 
 function updateProgressChips() {

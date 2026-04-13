@@ -149,6 +149,14 @@ function goToWordMatching() {
     window.location.href = `template/word-matching.html?${params.toString()}`;
 }
 
+function goToMultipleChoice() {
+    const params = buildStudyParams();
+
+    if (!params) return;
+
+    window.location.href = `template/multiple-choice.html?${params.toString()}`;
+}
+
 function setupChapterModalEvents() {
     const modal = document.getElementById('chapter-modal');
     const modalPanel = document.getElementById('chapter-modal-panel');
@@ -159,6 +167,7 @@ function setupChapterModalEvents() {
     const confirmBtn = document.getElementById('modal-confirm-btn');
     const flashcardModeBtn = document.getElementById('flashcard-mode-btn');
     const matchingModeBtn = document.getElementById('matching-mode-btn');
+    const multipleChoiceModeBtn = document.getElementById('multiple-choice-mode-btn');
     const rangeInput = document.getElementById('word-count-range');
     const presetButtons = document.querySelectorAll('[data-count-preset]');
 
@@ -170,6 +179,9 @@ function setupChapterModalEvents() {
     confirmBtn.addEventListener('click', showModePanel);
     flashcardModeBtn.addEventListener('click', goToVocabularyCard);
     matchingModeBtn.addEventListener('click', goToWordMatching);
+    if (multipleChoiceModeBtn) {
+        multipleChoiceModeBtn.addEventListener('click', goToMultipleChoice);
+    }
 
     modal.addEventListener('click', closeChapterModal);
     modalPanel.addEventListener('click', (event) => event.stopPropagation());
