@@ -1,4 +1,4 @@
-const APP_VERSION = "v5";
+const APP_VERSION = "v6";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
 const OFFLINE_URL = "./template/offline.html";
@@ -23,8 +23,9 @@ const APP_SHELL = [
   "./static/data/第三章-tablet.json",
   "./static/data/第四章-touchscreen.json",
   "./static/data/第五章-Unmanned Aerial Vehicle.json",
-  "./static/icons/icon-192.svg",
-  "./static/icons/icon-512.svg"
+  "./static/icons/apple-touch-icon.png",
+  "./static/icons/icon-192.png",
+  "./static/icons/icon-512.png"
 ];
 
 const NETWORK_FIRST_PATHS = [
