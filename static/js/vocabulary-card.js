@@ -18,14 +18,27 @@ const unknownWordIds = new Set();
 const swipeState = {
   startX: 0,
   startY: 0,
+  currentX: 0,
+  currentY: 0,
+  startTime: 0,
   isDragging: false,
   isScrollableTarget: false,
+  hasMoved: false,
+  isHorizontalSwipe: false,
   pointerId: null,
+  suppressClickUntil: 0,
 };
 
-const SWIPE_TRIGGER_DISTANCE = 110;
+const SWIPE_TRIGGER_RATIO = 0.18;
+const SWIPE_TRIGGER_MIN_DISTANCE = 56;
+const SWIPE_TRIGGER_MAX_DISTANCE = 90;
+const SWIPE_INTENT_DISTANCE = 8;
+const SWIPE_VERTICAL_CANCEL_DISTANCE = 14;
+const SWIPE_FLICK_MIN_DISTANCE = 42;
+const SWIPE_FLICK_MIN_VELOCITY = 0.45;
 const SWIPE_ROTATION_FACTOR = 0.06;
-const SWIPE_ANIMATION_MS = 280;
+const SWIPE_ANIMATION_MS = 220;
+const SWIPE_CLICK_SUPPRESS_MS = 320;
 
 // --- 預設測試資料 (避免沒有後端/本地檔案時畫面空白) ---
 const fallbackWordData = [
@@ -287,9 +300,13 @@ function animateSwipeAndMark(result) {
     result === "known" ? "is-exiting-right" : "is-exiting-left";
   const directionClass = result === "known" ? "swipe-right" : "swipe-left";
 
+  cardShell.classList.remove("is-dragging", "is-resetting");
+  cardShell.style.transform = "";
   cardShell.classList.add("is-animating", directionClass, exitClass);
 
   window.setTimeout(() => {
+    markCurrentWord(result);
+    cardShell.classList.add("is-resetting");
     cardShell.classList.remove(
       "is-animating",
       "swipe-left",
@@ -298,7 +315,9 @@ function animateSwipeAndMark(result) {
       "is-exiting-right",
     );
     clearCardTransform();
-    markCurrentWord(result);
+    window.requestAnimationFrame(() => {
+      cardShell.classList.remove("is-resetting");
+    });
   }, SWIPE_ANIMATION_MS);
 }
 
@@ -320,62 +339,216 @@ function updateDragVisual(deltaX) {
   cardShell.classList.toggle("swipe-left", limitedDelta < -28);
 }
 
+function getSwipeTriggerDistance() {
+  const cardShell = document.getElementById("card-shell");
+  const cardWidth = cardShell
+    ? cardShell.getBoundingClientRect().width
+    : window.innerWidth;
+
+  return Math.max(
+    SWIPE_TRIGGER_MIN_DISTANCE,
+    Math.min(cardWidth * SWIPE_TRIGGER_RATIO, SWIPE_TRIGGER_MAX_DISTANCE),
+  );
+}
+
+function isInteractiveSwipeTarget(target) {
+  if (!target || !target.closest) return false;
+
+  return Boolean(
+    target.closest(
+      "button, a, input, textarea, select, [contenteditable='true']",
+    ),
+  );
+}
+
+function releaseSwipePointer(cardShell, pointerId) {
+  if (
+    !cardShell ||
+    pointerId === null ||
+    !cardShell.hasPointerCapture ||
+    !cardShell.hasPointerCapture(pointerId)
+  ) {
+    return;
+  }
+
+  try {
+    cardShell.releasePointerCapture(pointerId);
+  } catch {
+    // Pointer capture can already be gone after cancel/blur; ordinary pointer events still work.
+  }
+}
+
+function resetSwipeState() {
+  swipeState.isDragging = false;
+  swipeState.isScrollableTarget = false;
+  swipeState.hasMoved = false;
+  swipeState.isHorizontalSwipe = false;
+  swipeState.pointerId = null;
+}
+
+function resetCardAfterDrag(cardShell) {
+  if (!cardShell) return;
+
+  cardShell.classList.remove("is-dragging", "swipe-left", "swipe-right");
+  clearCardTransform();
+}
+
+function suppressSwipeClick() {
+  swipeState.suppressClickUntil = performance.now() + SWIPE_CLICK_SUPPRESS_MS;
+}
+
 function handleSwipeStart(event) {
   const cardShell = document.getElementById("card-shell");
   if (!cardShell || cardShell.classList.contains("is-animating")) return;
+  if (swipeState.isDragging || event.isPrimary === false) return;
+  if (event.pointerType === "mouse" && event.button !== 0) return;
+  if (isInteractiveSwipeTarget(event.target)) return;
 
   swipeState.isScrollableTarget = Boolean(
-    event.target.closest(".custom-scrollbar"),
+    event.target.closest && event.target.closest(".custom-scrollbar"),
   );
   swipeState.isDragging = !swipeState.isScrollableTarget;
   swipeState.startX = event.clientX;
   swipeState.startY = event.clientY;
+  swipeState.currentX = event.clientX;
+  swipeState.currentY = event.clientY;
+  swipeState.startTime = performance.now();
+  swipeState.hasMoved = false;
+  swipeState.isHorizontalSwipe = false;
   swipeState.pointerId = event.pointerId;
+
+  if (!swipeState.isDragging) return;
+
+  cardShell.classList.remove("swipe-left", "swipe-right");
+  cardShell.classList.add("is-dragging");
+
+  if (cardShell.setPointerCapture) {
+    try {
+      cardShell.setPointerCapture(event.pointerId);
+    } catch {
+      // Some browsers can reject capture during cancellation; continue with normal events.
+    }
+  }
 }
 
 function handleSwipeMove(event) {
   if (!swipeState.isDragging || swipeState.isScrollableTarget) return;
+  if (event.isPrimary === false) return;
+  if (event.pointerId !== swipeState.pointerId) return;
 
   const deltaX = event.clientX - swipeState.startX;
   const deltaY = event.clientY - swipeState.startY;
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
 
-  if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 12) {
-    handleSwipeEnd();
-    return;
+  swipeState.currentX = event.clientX;
+  swipeState.currentY = event.clientY;
+
+  if (!swipeState.isHorizontalSwipe) {
+    const isBelowIntentDistance =
+      absDeltaX < SWIPE_INTENT_DISTANCE && absDeltaY < SWIPE_INTENT_DISTANCE;
+
+    if (isBelowIntentDistance) return;
+
+    if (
+      absDeltaY > absDeltaX * 1.15 &&
+      absDeltaY > SWIPE_VERTICAL_CANCEL_DISTANCE
+    ) {
+      const cardShell = document.getElementById("card-shell");
+      const pointerId = swipeState.pointerId;
+      suppressSwipeClick();
+      releaseSwipePointer(cardShell, pointerId);
+      resetCardAfterDrag(cardShell);
+      resetSwipeState();
+      return;
+    }
+
+    if (absDeltaX <= absDeltaY || absDeltaX < SWIPE_INTENT_DISTANCE) return;
+
+    swipeState.isHorizontalSwipe = true;
   }
 
+  if (event.cancelable) {
+    event.preventDefault();
+  }
+  event.stopPropagation();
+  swipeState.hasMoved = true;
   updateDragVisual(deltaX);
 }
 
-function handleSwipeEnd(event) {
-  if (event && swipeState.pointerId !== null && event.pointerId !== swipeState.pointerId) {
+function shouldCommitSwipe(deltaX, deltaY, durationMs) {
+  const absDeltaX = Math.abs(deltaX);
+  const absDeltaY = Math.abs(deltaY);
+  const isHorizontalSwipe = absDeltaX > absDeltaY * 1.05;
+
+  if (!isHorizontalSwipe) return false;
+
+  if (absDeltaX >= getSwipeTriggerDistance()) return true;
+
+  const velocity = absDeltaX / Math.max(durationMs, 1);
+  return (
+    absDeltaX >= SWIPE_FLICK_MIN_DISTANCE &&
+    velocity >= SWIPE_FLICK_MIN_VELOCITY
+  );
+}
+
+function handleSwipeClick(event) {
+  if (performance.now() > swipeState.suppressClickUntil) {
     return;
   }
+
+  event.preventDefault();
+  event.stopPropagation();
+}
+
+function handleSwipeEnd(event) {
+  if (event && event.isPrimary === false) return;
+
+  if (
+    event &&
+    swipeState.pointerId !== null &&
+    event.pointerId !== swipeState.pointerId
+  ) {
+    return;
+  }
+
+  const cardShell = document.getElementById("card-shell");
+  const pointerId = swipeState.pointerId;
 
   if (!swipeState.isDragging || swipeState.isScrollableTarget) {
-    swipeState.isDragging = false;
-    swipeState.isScrollableTarget = false;
-    swipeState.pointerId = null;
+    releaseSwipePointer(cardShell, pointerId);
+    resetCardAfterDrag(cardShell);
+    resetSwipeState();
     return;
   }
 
-  const deltaX = event ? event.clientX - swipeState.startX : 0;
-  swipeState.isDragging = false;
-  swipeState.isScrollableTarget = false;
-  swipeState.pointerId = null;
+  if (event) {
+    swipeState.currentX = event.clientX;
+    swipeState.currentY = event.clientY;
+  }
 
-  if (deltaX >= SWIPE_TRIGGER_DISTANCE) {
-    animateSwipeAndMark("known");
+  const deltaX = swipeState.currentX - swipeState.startX;
+  const deltaY = swipeState.currentY - swipeState.startY;
+  const durationMs = performance.now() - swipeState.startTime;
+  const movedEnoughToCancelClick =
+    swipeState.hasMoved ||
+    Math.abs(deltaX) > SWIPE_INTENT_DISTANCE ||
+    Math.abs(deltaY) > SWIPE_INTENT_DISTANCE;
+
+  if (movedEnoughToCancelClick) {
+    suppressSwipeClick();
+  }
+
+  releaseSwipePointer(cardShell, pointerId);
+  resetSwipeState();
+  if (cardShell) cardShell.classList.remove("is-dragging");
+
+  if (shouldCommitSwipe(deltaX, deltaY, durationMs)) {
+    animateSwipeAndMark(deltaX > 0 ? "known" : "unknown");
     return;
   }
 
-  if (deltaX <= -SWIPE_TRIGGER_DISTANCE) {
-    animateSwipeAndMark("unknown");
-    return;
-  }
-
-  document.getElementById("card-shell").classList.remove("swipe-left", "swipe-right");
-  clearCardTransform();
+  resetCardAfterDrag(cardShell);
 }
 
 function updateSummaryModal() {
@@ -429,7 +602,7 @@ function speakText(elementId, event) {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(textToSpeak);
     utterance.lang = "en-US";
-    utterance.rate = 0.85;
+    utterance.rate = 0.70;
     utterance.pitch = 0.95;
 
     const voices = window.speechSynthesis.getVoices();
@@ -462,7 +635,7 @@ function setupSwipeEvents() {
   cardShell.addEventListener("pointermove", handleSwipeMove);
   cardShell.addEventListener("pointerup", handleSwipeEnd);
   cardShell.addEventListener("pointercancel", handleSwipeEnd);
-  cardShell.addEventListener("pointerleave", handleSwipeEnd);
+  cardShell.addEventListener("click", handleSwipeClick, true);
 }
 
 function setupModalEvents() {
