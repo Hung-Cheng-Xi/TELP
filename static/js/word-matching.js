@@ -28,8 +28,6 @@ function getElements() {
     roundLabel: document.getElementById("round-label"),
     progress: document.getElementById("game-progress"),
     timer: document.getElementById("game-timer"),
-    hint: document.getElementById("game-hint"),
-    subtitle: document.getElementById("game-subtitle"),
     loading: document.getElementById("loading-state"),
     grid: document.getElementById("game-grid"),
     completeScreen: document.getElementById("game-complete-screen"),
@@ -326,14 +324,9 @@ function updateProgressDisplay() {
 function updateRoundDisplay() {
   const elements = getElements();
   const totalRounds = Math.max(roundsData.length, 1);
-  const currentVocab = roundsData[currentRound] || [];
 
   if (elements.roundLabel) {
     elements.roundLabel.innerText = `${Math.min(currentRound + 1, totalRounds)} / ${totalRounds}`;
-  }
-
-  if (elements.subtitle) {
-    elements.subtitle.innerText = `本回合 ${currentVocab.length} 組，完成後會自動進入下一回合。`;
   }
 }
 
@@ -366,12 +359,10 @@ function goHome() {
 
 function setupEvents() {
   const exitButton = document.getElementById("exit-button");
-  const restartButton = document.getElementById("restart-button");
   const completeHomeButton = document.getElementById("complete-home-button");
   const completeRestartButton = document.getElementById("complete-restart-button");
 
   if (exitButton) exitButton.addEventListener("click", goHome);
-  if (restartButton) restartButton.addEventListener("click", startGame);
   if (completeHomeButton) completeHomeButton.addEventListener("click", goHome);
   if (completeRestartButton) completeRestartButton.addEventListener("click", startGame);
 
