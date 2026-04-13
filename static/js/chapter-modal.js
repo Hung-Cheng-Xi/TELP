@@ -29,6 +29,7 @@ function openChapterModal(title, fileName, wordCount) {
     updateRangeLabels(minCount, wordCount);
     updateRangeProgress(initialCount, minCount, wordCount);
     updatePresetButtons(initialCount, wordCount);
+    showSetupPanel();
 
     modal.classList.remove('hidden');
     modal.classList.add('flex');
@@ -42,7 +43,28 @@ function closeChapterModal() {
     modal.classList.add('hidden');
     modal.classList.remove('flex');
     document.body.classList.remove('modal-open');
+    showSetupPanel();
     selectedChapter = null;
+}
+
+function showSetupPanel() {
+    const setupPanel = document.getElementById('chapter-modal-panel');
+    const modePanel = document.getElementById('mode-modal-panel');
+
+    if (setupPanel) setupPanel.classList.remove('hidden');
+    if (modePanel) modePanel.classList.add('hidden');
+}
+
+function showModePanel() {
+    if (!selectedChapter) return;
+
+    const setupPanel = document.getElementById('chapter-modal-panel');
+    const modePanel = document.getElementById('mode-modal-panel');
+    const modeChapterTitle = document.getElementById('mode-chapter-title');
+
+    if (modeChapterTitle) modeChapterTitle.innerText = selectedChapter.title;
+    if (setupPanel) setupPanel.classList.add('hidden');
+    if (modePanel) modePanel.classList.remove('hidden');
 }
 
 function updateWordCountDisplay(value) {
@@ -98,36 +120,60 @@ function getInitialWordCount(wordCount) {
     return Math.max(Math.min(DEFAULT_WORD_COUNT, wordCount), minCount);
 }
 
-function goToVocabularyCard() {
+function buildStudyParams() {
     if (!selectedChapter) return;
 
     const rangeInput = document.getElementById('word-count-range');
     const randomToggle = document.getElementById('random-toggle');
 
-    const params = new URLSearchParams({
+    return new URLSearchParams({
         chapter: selectedChapter.fileName,
         count: String(Number(rangeInput.value)),
         random: randomToggle.checked ? '1' : '0'
     });
+}
+
+function goToVocabularyCard() {
+    const params = buildStudyParams();
+
+    if (!params) return;
 
     window.location.href = `vocabulary-card.html?${params.toString()}`;
+}
+
+function goToWordMatching() {
+    const params = buildStudyParams();
+
+    if (!params) return;
+
+    window.location.href = `word-matching.html?${params.toString()}`;
 }
 
 function setupChapterModalEvents() {
     const modal = document.getElementById('chapter-modal');
     const modalPanel = document.getElementById('chapter-modal-panel');
+    const modePanel = document.getElementById('mode-modal-panel');
     const closeBtn = document.getElementById('modal-close-btn');
+    const modeCloseBtn = document.getElementById('mode-close-btn');
+    const modeBackBtn = document.getElementById('mode-back-btn');
     const confirmBtn = document.getElementById('modal-confirm-btn');
+    const flashcardModeBtn = document.getElementById('flashcard-mode-btn');
+    const matchingModeBtn = document.getElementById('matching-mode-btn');
     const rangeInput = document.getElementById('word-count-range');
     const presetButtons = document.querySelectorAll('[data-count-preset]');
 
-    if (!modal || !modalPanel || !closeBtn || !confirmBtn || !rangeInput) return;
+    if (!modal || !modalPanel || !modePanel || !closeBtn || !modeCloseBtn || !modeBackBtn || !confirmBtn || !flashcardModeBtn || !matchingModeBtn || !rangeInput) return;
 
     closeBtn.addEventListener('click', closeChapterModal);
-    confirmBtn.addEventListener('click', goToVocabularyCard);
+    modeCloseBtn.addEventListener('click', closeChapterModal);
+    modeBackBtn.addEventListener('click', showSetupPanel);
+    confirmBtn.addEventListener('click', showModePanel);
+    flashcardModeBtn.addEventListener('click', goToVocabularyCard);
+    matchingModeBtn.addEventListener('click', goToWordMatching);
 
     modal.addEventListener('click', closeChapterModal);
     modalPanel.addEventListener('click', (event) => event.stopPropagation());
+    modePanel.addEventListener('click', (event) => event.stopPropagation());
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !modal.classList.contains('hidden')) {

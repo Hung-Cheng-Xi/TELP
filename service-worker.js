@@ -1,4 +1,4 @@
-const APP_VERSION = "v1";
+const APP_VERSION = "v2";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
 
@@ -6,11 +6,13 @@ const APP_SHELL = [
   "./",
   "./index.html",
   "./vocabulary-card.html",
+  "./word-matching.html",
   "./manifest.webmanifest",
   "./offline.html",
   "./static/js/index.js",
-  "./static/js/location.js",
+  "./static/js/chapter-modal.js",
   "./static/js/vocabulary-card.js",
+  "./static/js/word-matching.js",
   "./static/js/pwa.js",
   "./static/data/list.json",
   "./static/data/第一章-covid-19.json",
