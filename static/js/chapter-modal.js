@@ -138,7 +138,7 @@ function goToVocabularyCard() {
 
     if (!params) return;
 
-    window.location.href = `vocabulary-card.html?${params.toString()}`;
+    window.location.href = `template/vocabulary-card.html?${params.toString()}`;
 }
 
 function goToWordMatching() {
@@ -146,7 +146,7 @@ function goToWordMatching() {
 
     if (!params) return;
 
-    window.location.href = `word-matching.html?${params.toString()}`;
+    window.location.href = `template/word-matching.html?${params.toString()}`;
 }
 
 function setupChapterModalEvents() {

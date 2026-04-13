@@ -10,6 +10,8 @@ let activeSettings = {
 };
 let reviewHistory = [];
 
+const DATA_PATH = "../static/data/";
+
 const knownWordIds = new Set();
 const unknownWordIds = new Set();
 
@@ -46,7 +48,7 @@ const fallbackWordData = [
 
 async function loadChapter(filename) {
   try {
-    const response = await fetch(`static/data/${filename}`);
+    const response = await fetch(`${DATA_PATH}${filename}`);
     if (!response.ok) {
       throw new Error(`無法載入 ${filename}，將使用預設資料。`);
     }
@@ -219,7 +221,7 @@ function goToExitDestination() {
     return;
   }
 
-  window.location.href = "./index.html";
+  window.location.href = "../index.html";
 }
 
 function restorePreviousWord() {
@@ -477,7 +479,7 @@ function setupModalEvents() {
   continueBtn.addEventListener("click", startReviewUnknownWords);
   restartBtn.addEventListener("click", () => resetStudySession(originalWordData));
   backHomeBtn.addEventListener("click", () => {
-    window.location.href = "./index.html";
+    window.location.href = "../index.html";
   });
 
   document.addEventListener("keydown", (event) => {

@@ -1,4 +1,4 @@
-const DATA_PATH = "./static/data/";
+const DATA_PATH = "../static/data/";
 const DEFAULT_CHAPTER = "第三章-tablet.json";
 const MAX_PAIRS_PER_ROUND = 6;
 const CARD_HIDE_DELAY_MS = 360;
@@ -354,7 +354,7 @@ function getChapterTitle(filename) {
 
 function goHome() {
   clearInterval(gameTimerInterval);
-  window.location.href = "./index.html";
+  window.location.href = "../index.html";
 }
 
 function setupEvents() {

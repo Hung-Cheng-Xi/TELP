@@ -1,14 +1,15 @@
-const APP_VERSION = "v2";
+const APP_VERSION = "v4";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
+const OFFLINE_URL = "./template/offline.html";
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./vocabulary-card.html",
-  "./word-matching.html",
+  "./template/vocabulary-card.html",
+  "./template/word-matching.html",
+  OFFLINE_URL,
   "./manifest.webmanifest",
-  "./offline.html",
   "./static/js/index.js",
   "./static/js/chapter-modal.js",
   "./static/js/vocabulary-card.js",
@@ -77,12 +78,12 @@ async function handleNavigationRequest(request) {
     cache.put(request, response.clone());
     return response;
   } catch (error) {
-    const cached = await caches.match(request);
+    const cached = await caches.match(request, { ignoreSearch: true });
     if (cached) {
       return cached;
     }
 
-    return caches.match("./offline.html");
+    return caches.match(OFFLINE_URL);
   }
 }
 

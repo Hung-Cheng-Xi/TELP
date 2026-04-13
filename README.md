@@ -45,12 +45,13 @@ http://localhost:5173/
 
 ```text
 .
-├── index.html                 # 首頁：章節選擇、題數設定、模式選擇
-├── vocabulary-card.html       # 單字卡複習頁
-├── word-matching.html         # 中英文配對遊戲頁
-├── offline.html               # PWA 離線提示頁
 ├── manifest.webmanifest       # PWA manifest
 ├── service-worker.js          # 快取策略與離線支援
+├── index.html                 # 首頁：章節選擇、題數設定、模式選擇
+├── template
+│   ├── vocabulary-card.html   # 單字卡複習頁
+│   ├── word-matching.html     # 中英文配對遊戲頁
+│   └── offline.html           # PWA 離線提示頁
 └── static
     ├── data
     │   ├── list.json          # 題庫章節清單
@@ -106,4 +107,4 @@ Service worker 需要在 `localhost` 或 HTTPS 環境下運作。第一次載入
 
 ## 開發狀態
 
-目前版本採用 JSON 題庫驅動的單字複習 PWA。主要入口是 `index.html`，核心練習模式是 `vocabulary-card.html` 與 `word-matching.html`。
+目前版本採用 JSON 題庫驅動的單字複習 PWA。主要入口是 `index.html`，核心練習模式是 `template/vocabulary-card.html` 與 `template/word-matching.html`。
