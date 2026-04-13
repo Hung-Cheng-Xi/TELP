@@ -1,97 +1,109 @@
-<div align="center">
+# 單字學習艙
 
-# 🚀 極致單字卡 (Ultimate Flashcards)
+單字學習艙是一個以純前端實作的英文單字複習工具。專案以靜態網頁形式運作，不需要後端或建置流程；首頁會讀取 `static/data/list.json` 中定義的章節清單，再依照使用者選擇載入對應的 JSON 題庫。
 
-![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Ffgh09101010%2FVocabulary-practice&label=VIEWERS&countColor=%234F46E5&style=flat-square)
-![Maintained](https://img.shields.io/badge/Maintained%3F-yes-green.svg?style=flat-square)
-![Energy](https://img.shields.io/badge/Energy-100%25-orange?style=flat-square)
-![Coffee](https://img.shields.io/badge/Powered%20by-Coffee-brown?style=flat-square&logo=buy-me-a-coffee)
-![Love](https://img.shields.io/badge/Made%20with-Love-red?style=flat-square)
+目前專案聚焦在「快速開始一輪複習」：選擇章節、設定題數與是否隨機出題後，可以進入翻卡式單字卡，或改用中英文配對遊戲檢查熟悉度。整體介面支援桌機與手機瀏覽，也具備 PWA 安裝與離線快取能力。
 
-**以純前端技術打造的現代化單字學習網頁應用程式**
+## 主要功能
 
-## [✨✨ 點我立即體驗 ✨✨](https://fgh09101010.github.io/Vocabulary-practice/) 
+- 章節式題庫：透過 `static/data/list.json` 管理章節檔案，首頁自動列出可練習的 JSON 題庫。
+- 複習設定：每次開始前可選擇題數，支援 10 題、20 題、全部，以及自訂範圍與隨機模式。
+- 單字卡複習：提供翻卡式單字、詞性、中文意思、記憶筆記、字根拆解與情境例句。
+- 熟悉度分類：在單字卡模式中可左右滑動或使用鍵盤方向鍵，把單字標記為「會」或「不會」。
+- 集中複習弱項：完成一輪後會顯示摘要，並可只針對「不會」的單字再複習。
+- 英文語音朗讀：使用瀏覽器 Web Speech API 播放單字與例句發音。
+- 單詞配對配：以連連看方式練習中英文對應，每回合最多 6 組單字，完成後自動進入下一回合。
+- PWA 支援：包含 `manifest.webmanifest`、`service-worker.js` 與離線頁面，可在支援的瀏覽器安裝並快取本地資源。
 
-</div>
+目前內建 5 個章節範例題庫，共 379 個單字：
 
----
+| 章節檔案 | 單字數 |
+| --- | ---: |
+| `第一章-covid-19.json` | 101 |
+| `第二章-特斯拉.json` | 71 |
+| `第三章-tablet.json` | 65 |
+| `第四章-touchscreen.json` | 70 |
+| `第五章-Unmanned Aerial Vehicle.json` | 72 |
 
-## 📖 專案簡介
-這是一個專為大學生設計的單字練習工具，結合了視覺、聽覺與 AI 輔助記憶。本專案特別實作了隱形訪客追蹤系統，能透過 Google Sheets 紀錄並分析學習者的行為數據，實現數據驅動的學習優化。
+## 使用方式
 
-### ✨ 核心特色功能
-- **📊 彈性題庫設定**：支援 CSV 讀取，可自由選擇抽題數量、循序練習或隨機亂序排列。
-- **📖 結合 PDF 閱讀**：動態偵測並關聯課文 PDF，實現「先閱讀、後測驗」的完整學習閉環。
-- **🖼️ 動態維基配圖**：即時串接 Wikipedia API 抓取單字對應圖片，強化圖像連結記憶。
-- **🔊 原生語音朗讀**：內建 TTS 系統，提供標準美式發音，支援離線朗讀。
-- **🤖 AI 記憶輔助**：練習結束後自動生成專屬 ChatGPT 指令，讓 AI 為您量身打造諧音記憶法。
-- **📱 響應式 UI**：採用現代化 Glassmorphism 毛玻璃設計，完美適配手機與電腦螢幕。
+這是靜態網站，但因為頁面會使用 `fetch()` 載入 JSON 題庫，請透過本機伺服器開啟，不要直接用檔案路徑開啟 HTML。
 
----
+```bash
+python3 -m http.server 5173
+```
 
-## 📂 專案架構與運行
+啟動後開啟：
 
-### 檔案結構
 ```text
-/
-├── index.html       # 主應用程式 (單字卡)
-├── dashboard.html   # 管理員數據看板 (KPI 與圖表動態分析)
-├── data/            # 題庫目錄 (CSV 格式)
-└── pdf/             # 關聯文章目錄 (PDF 格式)
-````
+http://localhost:5173/
+```
 
-### 如何運行
+也可以使用 VS Code 的 Live Server 或任何靜態檔案伺服器。
 
-1.  使用 VS Code 開啟此專案資料夾。
-2.  啟動 **Live Server** 插件運行 `index.html`。
-3.  *重要備註：由於瀏覽器 CORS 安全限制，請勿直接以檔案路徑開啟，否則無法讀取 CSV 資料。*
+## 專案結構
 
------
+```text
+.
+├── index.html                 # 首頁：章節選擇、題數設定、模式選擇
+├── vocabulary-card.html       # 單字卡複習頁
+├── word-matching.html         # 中英文配對遊戲頁
+├── offline.html               # PWA 離線提示頁
+├── manifest.webmanifest       # PWA manifest
+├── service-worker.js          # 快取策略與離線支援
+└── static
+    ├── data
+    │   ├── list.json          # 題庫章節清單
+    │   └── *.json             # 單字題庫
+    ├── icons                  # PWA 圖示
+    └── js
+        ├── chapter-modal.js   # 首頁設定與模式選擇流程
+        ├── index.js           # 章節資料載入與首頁卡片渲染
+        ├── pwa.js             # Service worker 註冊
+        ├── vocabulary-card.js # 單字卡流程、滑動分類、語音朗讀
+        └── word-matching.js   # 配對遊戲流程
+```
 
-## 🛠️ 技術棧 (Tech Stack)
+## 題庫格式
 
-* **前端**：HTML5, CSS3 (CSS Variables, Flexbox), Vanilla JavaScript (ES6+).
-* **第三方套件**：
-  * [PapaParse](https://www.papaparse.com/) (用於解析 CSV 檔案)
-  * [FontAwesome](https://fontawesome.com/) (向量圖示)
-* **外部 API**：
-  * Wikipedia Action API (抓取圖片)
+新增章節時，先在 `static/data/` 放入 JSON 檔，再把檔名加入 `static/data/list.json`。每個單字項目建議包含以下欄位：
 
----
+```json
+{
+  "word": "pandemic",
+  "pos": "n./adj.",
+  "meaning": "流行病；流行的",
+  "homophone": "<span class='font-bold'>怕你帶沒克</span>：一場<b>流行病(pandemic)</b>來了，大家都怕你帶來病毒。",
+  "roots": "<strong>pan-</strong>（全部）+ <strong>dem</strong>（人民）：影響很多地區與人群的流行病。",
+  "ex1En": "The <span class='text-indigo-600 font-bold'>pandemic</span> caused anxiety and confusion.",
+  "ex1Zh": "這場流行病造成了焦慮與混亂。",
+  "ex2En": "In some areas, the virus became <span class='text-indigo-600 font-bold'>pandemic</span> very quickly.",
+  "ex2Zh": "在某些地區，這種病毒很快就變得流行。"
+}
+```
 
-## 👨‍💻 開發者資訊
+`homophone`、`roots`、`ex1En` 等欄位目前會以 HTML 方式渲染，方便標示重點字，但也代表題庫內容應只放可信資料。
 
-<div align="center">
+## PWA 與離線快取
 
-<table style="border: none; border-collapse: collapse;">
-  <tr>
-    <td align="center" width="150px" style="border: none;">
-      <a href="https://github.com/fgh09101010">
-        <img src="https://github.com/fgh09101010.png" width="120px;" style="border-radius: 50%; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" alt="fgh09101010"/><br />
-        <br />
-        <b>fgh09101010</b>
-      </a>
-    </td>
-    <td align="left" style="border: none; vertical-align: top; padding-left: 20px;">
-      <h3>🎓 大學四年級學生 | 數據開發者</h3>
-      <p>熱衷於將日常需求<b>自動化</b>與<b>遊戲化</b>。專注於 Web 前端技術、Python 數據分析與機器學習模型研究。目前正致力於開發能提升學習效率的數位工具。</p>
-      <div style="margin-top: 10px;">
-        <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black" alt="JS" />
-        <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" />
-        <img src="https://img.shields.io/badge/Google_Apps_Script-4285F4?style=flat-square&logo=google&logoColor=white" alt="GAS" />
-        <img src="https://img.shields.io/badge/Status-Actively_Learning-brightgreen?style=flat-square" alt="Status" />
-      </div>
-      <p style="font-size: 0.9em; color: #555; margin-top: 15px;">
-        📫 聯絡我：fgh09101010@gmail.com
-      </p>
-    </td>
-  </tr>
-</table>
+Service worker 會預先快取首頁、練習頁、核心 JavaScript、圖示與目前列在 `APP_SHELL` 中的題庫檔案。若新增或更名章節，請同步更新：
 
-<div align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=fgh09101010&show_icons=true&theme=radical&cache_seconds=1800" alt="fgh09101010's GitHub Stats" />
+- `static/data/list.json`
+- `service-worker.js` 的 `APP_SHELL`
+- 必要時調整 `APP_VERSION` 讓使用者取得新版快取
 
-  <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=fgh09101010&layout=compact&theme=radical&cache_seconds=1800" alt="fgh09101010's Top Langs" />
-</div>
+Service worker 需要在 `localhost` 或 HTTPS 環境下運作。第一次載入時使用到的 CDN 資源，例如 Tailwind CSS、Font Awesome 與 Google Fonts，仍需要網路連線或瀏覽器既有快取。
 
----
+## 技術使用
+
+- HTML5
+- Tailwind CSS CDN
+- Vanilla JavaScript
+- Font Awesome CDN
+- Google Fonts
+- Web Speech API
+- Service Worker / Web App Manifest
+
+## 開發狀態
+
+目前版本採用 JSON 題庫驅動的單字複習 PWA。主要入口是 `index.html`，核心練習模式是 `vocabulary-card.html` 與 `word-matching.html`。
