@@ -12,6 +12,7 @@ let score = 0;
 let quizTime = 0;
 let quizTimerInterval = null;
 let quizRunId = 0;
+let clearPendingOptionHoverReset = null;
 let activeChapterFile = DEFAULT_CHAPTER;
 let activeSettings = {
   count: null,
@@ -172,7 +173,50 @@ function renderQuestion() {
     elements.options.appendChild(createOptionElement(option, index));
   });
 
+  suppressLingeringOptionHover(elements.options);
   updateStatusDisplay();
+}
+
+function releaseOptionHoverReset() {
+  if (!clearPendingOptionHoverReset) return;
+
+  clearPendingOptionHoverReset();
+}
+
+function suppressLingeringOptionHover(optionsElement) {
+  releaseOptionHoverReset();
+
+  const optionButtons = Array.from(
+    optionsElement.querySelectorAll(".quiz-option"),
+  );
+
+  if (optionButtons.length === 0) return;
+
+  optionButtons.forEach((button) => {
+    button.blur();
+    button.style.transform = "none";
+    button.style.borderColor = "transparent";
+    button.style.boxShadow = "var(--shadow-sm)";
+  });
+
+  const clearHoverReset = () => {
+    optionButtons.forEach((button) => {
+      button.style.removeProperty("transform");
+      button.style.removeProperty("border-color");
+      button.style.removeProperty("box-shadow");
+    });
+
+    document.removeEventListener("pointermove", clearHoverReset);
+    document.removeEventListener("pointerdown", clearHoverReset);
+    document.removeEventListener("keydown", clearHoverReset);
+
+    clearPendingOptionHoverReset = null;
+  };
+
+  clearPendingOptionHoverReset = clearHoverReset;
+  document.addEventListener("pointermove", clearHoverReset, { once: true });
+  document.addEventListener("pointerdown", clearHoverReset, { once: true });
+  document.addEventListener("keydown", clearHoverReset, { once: true });
 }
 
 function createOptionElement(option, index) {
@@ -208,6 +252,8 @@ function createOptionElement(option, index) {
 
 function handleOptionClick(option) {
   if (isAnswering || !questions[currentIndex]) return;
+
+  releaseOptionHoverReset();
 
   const currentQuestion = questions[currentIndex];
   const isCorrect = option.id === currentQuestion.word.id;
