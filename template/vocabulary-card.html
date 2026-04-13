@@ -79,6 +79,7 @@
         }
         .backface-hidden {
             backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         .rotate-y-180 {
             transform: rotateY(180deg);
@@ -93,11 +94,17 @@
             transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
             touch-action: pan-y;
             will-change: transform;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .card-shell.is-dragging,
         .card-shell.is-resetting {
-            transition: box-shadow 0.18s ease;
+            transition: none;
         }
 
         .card-shell.is-dragging {

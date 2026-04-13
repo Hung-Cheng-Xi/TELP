@@ -20,6 +20,10 @@ const swipeState = {
   startY: 0,
   currentX: 0,
   currentY: 0,
+  deltaX: 0,
+  deltaY: 0,
+  pendingDeltaX: 0,
+  animationFrameId: null,
   startTime: 0,
   isDragging: false,
   isScrollableTarget: false,
@@ -300,6 +304,7 @@ function animateSwipeAndMark(result) {
     result === "known" ? "is-exiting-right" : "is-exiting-left";
   const directionClass = result === "known" ? "swipe-right" : "swipe-left";
 
+  cancelDragFrame();
   cardShell.classList.remove("is-dragging", "is-resetting");
   cardShell.style.transform = "";
   cardShell.classList.add("is-animating", directionClass, exitClass);
@@ -334,9 +339,33 @@ function updateDragVisual(deltaX) {
 
   const limitedDelta = Math.max(Math.min(deltaX, 180), -180);
   const rotation = limitedDelta * SWIPE_ROTATION_FACTOR;
-  cardShell.style.transform = `translateX(${limitedDelta}px) rotate(${rotation}deg)`;
+  cardShell.style.transform = `translate3d(${limitedDelta}px, 0, 0) rotate(${rotation}deg)`;
   cardShell.classList.toggle("swipe-right", limitedDelta > 28);
   cardShell.classList.toggle("swipe-left", limitedDelta < -28);
+}
+
+function queueDragVisual(deltaX) {
+  swipeState.pendingDeltaX = deltaX;
+
+  if (swipeState.animationFrameId !== null) return;
+
+  if (!window.requestAnimationFrame) {
+    updateDragVisual(swipeState.pendingDeltaX);
+    return;
+  }
+
+  swipeState.animationFrameId = window.requestAnimationFrame(() => {
+    swipeState.animationFrameId = null;
+    updateDragVisual(swipeState.pendingDeltaX);
+  });
+}
+
+function cancelDragFrame() {
+  if (swipeState.animationFrameId !== null && window.cancelAnimationFrame) {
+    window.cancelAnimationFrame(swipeState.animationFrameId);
+  }
+
+  swipeState.animationFrameId = null;
 }
 
 function getSwipeTriggerDistance() {
@@ -379,6 +408,9 @@ function releaseSwipePointer(cardShell, pointerId) {
 }
 
 function resetSwipeState() {
+  swipeState.deltaX = 0;
+  swipeState.deltaY = 0;
+  swipeState.pendingDeltaX = 0;
   swipeState.isDragging = false;
   swipeState.isScrollableTarget = false;
   swipeState.hasMoved = false;
@@ -389,12 +421,36 @@ function resetSwipeState() {
 function resetCardAfterDrag(cardShell) {
   if (!cardShell) return;
 
+  cancelDragFrame();
   cardShell.classList.remove("is-dragging", "swipe-left", "swipe-right");
   clearCardTransform();
 }
 
 function suppressSwipeClick() {
   swipeState.suppressClickUntil = performance.now() + SWIPE_CLICK_SUPPRESS_MS;
+}
+
+function updateSwipePosition(event) {
+  if (!Number.isFinite(event.clientX) || !Number.isFinite(event.clientY)) {
+    return false;
+  }
+
+  swipeState.currentX = event.clientX;
+  swipeState.currentY = event.clientY;
+  swipeState.deltaX = swipeState.currentX - swipeState.startX;
+  swipeState.deltaY = swipeState.currentY - swipeState.startY;
+
+  return true;
+}
+
+function isReliableSwipeEndPoint(event) {
+  if (!event) return false;
+
+  return !(
+    event.pointerType === "touch" &&
+    event.clientX === 0 &&
+    event.clientY === 0
+  );
 }
 
 function handleSwipeStart(event) {
@@ -412,6 +468,10 @@ function handleSwipeStart(event) {
   swipeState.startY = event.clientY;
   swipeState.currentX = event.clientX;
   swipeState.currentY = event.clientY;
+  swipeState.deltaX = 0;
+  swipeState.deltaY = 0;
+  swipeState.pendingDeltaX = 0;
+  cancelDragFrame();
   swipeState.startTime = performance.now();
   swipeState.hasMoved = false;
   swipeState.isHorizontalSwipe = false;
@@ -436,13 +496,12 @@ function handleSwipeMove(event) {
   if (event.isPrimary === false) return;
   if (event.pointerId !== swipeState.pointerId) return;
 
-  const deltaX = event.clientX - swipeState.startX;
-  const deltaY = event.clientY - swipeState.startY;
+  if (!updateSwipePosition(event)) return;
+
+  const deltaX = swipeState.deltaX;
+  const deltaY = swipeState.deltaY;
   const absDeltaX = Math.abs(deltaX);
   const absDeltaY = Math.abs(deltaY);
-
-  swipeState.currentX = event.clientX;
-  swipeState.currentY = event.clientY;
 
   if (!swipeState.isHorizontalSwipe) {
     const isBelowIntentDistance =
@@ -473,7 +532,7 @@ function handleSwipeMove(event) {
   }
   event.stopPropagation();
   swipeState.hasMoved = true;
-  updateDragVisual(deltaX);
+  queueDragVisual(deltaX);
 }
 
 function shouldCommitSwipe(deltaX, deltaY, durationMs) {
@@ -504,6 +563,9 @@ function handleSwipeClick(event) {
 function handleSwipeEnd(event) {
   if (event && event.isPrimary === false) return;
 
+  const cardShell = document.getElementById("card-shell");
+  if (!cardShell || cardShell.classList.contains("is-animating")) return;
+
   if (
     event &&
     swipeState.pointerId !== null &&
@@ -512,7 +574,6 @@ function handleSwipeEnd(event) {
     return;
   }
 
-  const cardShell = document.getElementById("card-shell");
   const pointerId = swipeState.pointerId;
 
   if (!swipeState.isDragging || swipeState.isScrollableTarget) {
@@ -522,13 +583,12 @@ function handleSwipeEnd(event) {
     return;
   }
 
-  if (event) {
-    swipeState.currentX = event.clientX;
-    swipeState.currentY = event.clientY;
+  if (event && !swipeState.hasMoved && isReliableSwipeEndPoint(event)) {
+    updateSwipePosition(event);
   }
 
-  const deltaX = swipeState.currentX - swipeState.startX;
-  const deltaY = swipeState.currentY - swipeState.startY;
+  const deltaX = swipeState.deltaX;
+  const deltaY = swipeState.deltaY;
   const durationMs = performance.now() - swipeState.startTime;
   const movedEnoughToCancelClick =
     swipeState.hasMoved ||
@@ -540,13 +600,40 @@ function handleSwipeEnd(event) {
   }
 
   releaseSwipePointer(cardShell, pointerId);
-  resetSwipeState();
-  if (cardShell) cardShell.classList.remove("is-dragging");
 
   if (shouldCommitSwipe(deltaX, deltaY, durationMs)) {
+    cancelDragFrame();
+    updateDragVisual(deltaX);
+    resetSwipeState();
     animateSwipeAndMark(deltaX > 0 ? "known" : "unknown");
     return;
   }
+
+  resetSwipeState();
+  resetCardAfterDrag(cardShell);
+}
+
+function handleSwipeCancel(event) {
+  if (event && event.isPrimary === false) return;
+
+  const cardShell = document.getElementById("card-shell");
+
+  if (
+    event &&
+    swipeState.pointerId !== null &&
+    event.pointerId !== swipeState.pointerId
+  ) {
+    return;
+  }
+
+  if (swipeState.hasMoved || swipeState.isHorizontalSwipe) {
+    suppressSwipeClick();
+  }
+
+  releaseSwipePointer(cardShell, swipeState.pointerId);
+  resetSwipeState();
+
+  if (!cardShell || cardShell.classList.contains("is-animating")) return;
 
   resetCardAfterDrag(cardShell);
 }
@@ -634,7 +721,7 @@ function setupSwipeEvents() {
   cardShell.addEventListener("pointerdown", handleSwipeStart);
   cardShell.addEventListener("pointermove", handleSwipeMove);
   cardShell.addEventListener("pointerup", handleSwipeEnd);
-  cardShell.addEventListener("pointercancel", handleSwipeEnd);
+  cardShell.addEventListener("pointercancel", handleSwipeCancel);
   cardShell.addEventListener("click", handleSwipeClick, true);
 }
 
