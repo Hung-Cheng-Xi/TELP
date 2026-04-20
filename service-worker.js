@@ -23,6 +23,7 @@ const APP_SHELL = [
   "./static/data/第三章-tablet.json",
   "./static/data/第四章-touchscreen.json",
   "./static/data/第五章-Unmanned Aerial Vehicle.json",
+  "./static/data/第六章-Accelerometer & Gyroscope.json",
   "./static/icons/apple-touch-icon.png",
   "./static/icons/icon-192.png",
   "./static/icons/icon-512.png"
