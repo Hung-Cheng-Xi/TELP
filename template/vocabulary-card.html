@@ -90,6 +90,15 @@
             transition: transform 0.42s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
 
+        .flashcard-surface {
+            pointer-events: none;
+        }
+
+        #flashcard:not(.rotate-y-180) .card-front,
+        #flashcard.rotate-y-180 .card-back {
+            pointer-events: auto;
+        }
+
         .card-shell {
             transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
             touch-action: pan-y;
@@ -283,7 +292,7 @@
         <div id="flashcard" class="card-inner w-full h-full relative transform-style-3d rounded-[2rem]">
             
             <!-- ================= 正面 (單字回想區) ================= -->
-            <div class="flashcard-surface absolute inset-0 w-full h-full backface-hidden rounded-[2rem] flex flex-col items-center justify-center cursor-pointer" onclick="flipCard()">
+            <div class="card-front flashcard-surface absolute inset-0 w-full h-full backface-hidden rounded-[2rem] flex flex-col items-center justify-center cursor-pointer" data-flip-card onclick="flipCard()">
                 <div class="text-center flex flex-col items-center w-full px-5 sm:px-8 md:px-10">
                     <div class="inline-flex max-w-full flex-col items-center">
                         <div class="inline-flex items-center rounded-full border border-slate-200 bg-white/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-400 mb-5">Tap to reveal</div>
@@ -300,10 +309,10 @@
             </div>
 
             <!-- ================= 背面 (詳細資訊區) ================= -->
-            <div class="flashcard-surface absolute inset-0 w-full h-full backface-hidden rounded-[2rem] rotate-y-180 flex flex-col overflow-hidden">
+            <div class="card-back flashcard-surface absolute inset-0 w-full h-full backface-hidden rounded-[2rem] rotate-y-180 flex flex-col overflow-hidden">
                 
                 <!-- 頂部 Header：單字、詞性、中文意思 -->
-                <div class="bg-slate-50/90 border-b border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer" onclick="flipCard()">
+                <div class="bg-slate-50/90 border-b border-slate-200 p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 cursor-pointer" data-flip-card onclick="flipCard()">
                     <div class="w-full min-w-0">
                         <div class="flex items-end gap-2 sm:gap-3 mb-1 w-full min-w-0">
                             <h2 id="back-word" class="back-word-display word-display word-size-long min-w-0 font-bold text-slate-800">Loading...</h2>

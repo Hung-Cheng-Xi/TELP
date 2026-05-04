@@ -31,6 +31,7 @@ const swipeState = {
   isHorizontalSwipe: false,
   pointerId: null,
   suppressClickUntil: 0,
+  clickStartedOnFlipTarget: false,
 };
 
 const SWIPE_TRIGGER_RATIO = 0.18;
@@ -403,6 +404,10 @@ function isInteractiveSwipeTarget(target) {
   );
 }
 
+function isFlipClickTarget(target) {
+  return Boolean(target && target.closest && target.closest("[data-flip-card]"));
+}
+
 function releaseSwipePointer(cardShell, pointerId) {
   if (
     !cardShell ||
@@ -468,11 +473,14 @@ function isReliableSwipeEndPoint(event) {
 
 function handleSwipeStart(event) {
   const cardShell = document.getElementById("card-shell");
+  swipeState.clickStartedOnFlipTarget = false;
+
   if (!cardShell || cardShell.classList.contains("is-animating")) return;
   if (swipeState.isDragging || event.isPrimary === false) return;
   if (event.pointerType === "mouse" && event.button !== 0) return;
   if (isInteractiveSwipeTarget(event.target)) return;
 
+  swipeState.clickStartedOnFlipTarget = isFlipClickTarget(event.target);
   swipeState.isScrollableTarget = Boolean(
     event.target.closest && event.target.closest(".custom-scrollbar"),
   );
@@ -566,9 +574,22 @@ function shouldCommitSwipe(deltaX, deltaY, durationMs) {
 
 function handleSwipeClick(event) {
   if (performance.now() > swipeState.suppressClickUntil) {
+    const cardShell = document.getElementById("card-shell");
+    const flashcard = document.getElementById("flashcard");
+    const clickTargetWasCaptured =
+      event.target === cardShell || event.target === flashcard;
+
+    if (clickTargetWasCaptured && swipeState.clickStartedOnFlipTarget) {
+      swipeState.clickStartedOnFlipTarget = false;
+      event.preventDefault();
+      flipCard();
+    }
+
+    swipeState.clickStartedOnFlipTarget = false;
     return;
   }
 
+  swipeState.clickStartedOnFlipTarget = false;
   event.preventDefault();
   event.stopPropagation();
 }
