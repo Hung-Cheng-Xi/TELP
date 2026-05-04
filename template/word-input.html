@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>單字輸入模式 - 單字學習艙</title>
+    <meta name="theme-color" content="#020617">
+    <meta name="description" content="看中文意思輸入英文單字的拼寫練習，支援章節、題數與隨機出題。">
+    <link rel="manifest" href="../manifest.webmanifest">
+    <link rel="icon" href="../static/icons/icon-192.png" sizes="192x192" type="image/png">
+    <link rel="apple-touch-icon" sizes="180x180" href="../static/icons/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            color-scheme: light;
+            --background: #f5f7fb;
+            --foreground: #0f172a;
+            --muted: #64748b;
+            --muted-soft: #94a3b8;
+            --card: rgba(255, 255, 255, 0.88);
+            --border: rgba(15, 23, 42, 0.08);
+            --border-strong: rgba(15, 23, 42, 0.14);
+            --shadow-sm: 0 12px 30px rgba(15, 23, 42, 0.06);
+            --shadow: 0 24px 70px rgba(15, 23, 42, 0.09);
+            --shadow-lg: 0 32px 80px rgba(15, 23, 42, 0.15);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background:
+                radial-gradient(circle at top, rgba(255, 255, 255, 0.96), rgba(245, 247, 251, 0.72) 40%, rgba(245, 247, 251, 1) 78%),
+                linear-gradient(180deg, #fbfcfe 0%, #f5f7fb 100%);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .input-shell {
+            position: relative;
+            isolation: isolate;
+        }
+
+        .input-shell::before,
+        .input-shell::after {
+            content: "";
+            position: fixed;
+            border-radius: 999px;
+            filter: blur(64px);
+            opacity: 0.5;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .input-shell::before {
+            width: 18rem;
+            height: 18rem;
+            top: 2rem;
+            left: -4rem;
+            background: rgba(191, 219, 254, 0.45);
+        }
+
+        .input-shell::after {
+            width: 22rem;
+            height: 22rem;
+            right: -6rem;
+            bottom: 2rem;
+            background: rgba(226, 232, 240, 0.9);
+        }
+
+        .glass-panel,
+        .meaning-card,
+        .answer-panel,
+        .completion-panel,
+        .floating-control {
+            background: var(--card);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+            box-shadow: var(--shadow);
+        }
+
+        .input-board {
+            min-height: 34rem;
+        }
+
+        .meaning-text {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            text-wrap: balance;
+        }
+
+        .spelling-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .spelling-cell {
+            height: 3rem;
+            width: 2.55rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.95rem;
+            background: rgba(255, 255, 255, 0.92);
+            color: #0f172a;
+            text-align: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            line-height: 1;
+            outline: none;
+            box-shadow: var(--shadow-sm);
+            transition: border-color 0.16s ease, background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+        }
+
+        .spelling-cell:focus {
+            border-color: #0f172a;
+            box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1), var(--shadow-sm);
+            transform: translateY(-1px);
+        }
+
+        .spelling-cell.is-correct {
+            border-color: #22c55e;
+            background: #f0fdf4;
+            color: #166534;
+        }
+
+        .spelling-cell.is-error {
+            border-color: #ef4444;
+            background: #fef2f2;
+            color: #991b1b;
+            box-shadow: 0 14px 32px rgba(239, 68, 68, 0.12);
+        }
+
+        .spelling-cell.is-revealed {
+            border-color: #0f172a;
+            background: #f8fafc;
+            color: #0f172a;
+        }
+
+        .word-separator {
+            display: inline-flex;
+            height: 3rem;
+            min-width: 1.1rem;
+            align-items: center;
+            justify-content: center;
+            color: #94a3b8;
+            font-weight: 800;
+        }
+
+        .static-character {
+            min-width: 1.8rem;
+            font-size: 1.2rem;
+        }
+
+        .answer-preview {
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        @media (min-width: 640px) {
+            .spelling-grid {
+                gap: 0.65rem;
+            }
+
+            .spelling-cell {
+                height: 3.35rem;
+                width: 2.9rem;
+                border-radius: 1.05rem;
+                font-size: 1.45rem;
+            }
+
+            .word-separator {
+                height: 3.35rem;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .spelling-grid {
+                gap: 0.38rem;
+            }
+
+            .spelling-cell {
+                height: 2.72rem;
+                width: 2.25rem;
+                border-radius: 0.8rem;
+                font-size: 1.05rem;
+            }
+
+            .word-separator {
+                height: 2.72rem;
+                min-width: 0.7rem;
+            }
+        }
+    </style>
+</head>
+
+<body class="input-shell min-h-screen text-slate-800">
+    <div class="flex min-h-screen flex-col">
+        <header class="shrink-0 px-3 py-3 sm:px-4 md:px-6 md:py-5">
+            <div class="glass-panel mx-auto flex max-w-5xl items-center justify-between gap-3 rounded-[1.5rem] px-3 py-3 sm:px-4 md:rounded-[1.75rem] md:px-5">
+                <div class="flex min-w-0 items-center gap-3 md:gap-4">
+                    <button id="exit-button" type="button"
+                        class="floating-control inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-slate-500 transition hover:text-slate-900"
+                        aria-label="回到首頁">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </button>
+                    <div class="min-w-0">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.22em] text-slate-400">Word Input</p>
+                        <h1 id="chapter-title" class="truncate text-base font-extrabold tracking-tight text-slate-900 sm:text-lg md:text-xl">單字輸入模式</h1>
+                    </div>
+                </div>
+
+                <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                    <div class="hidden text-right sm:block">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">正確</p>
+                        <p id="input-score" class="font-mono text-sm font-extrabold text-slate-900 md:text-base">0 / 0</p>
+                    </div>
+                    <div class="h-9 w-px bg-slate-200"></div>
+                    <div class="text-right">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">進度</p>
+                        <p id="input-progress" class="font-mono text-sm font-extrabold text-slate-900 md:text-base">0 / 0</p>
+                    </div>
+                    <div class="h-9 w-px bg-slate-200"></div>
+                    <div class="w-14 text-right sm:w-16">
+                        <p class="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-400">時間</p>
+                        <p id="input-timer" class="font-mono text-sm font-extrabold text-slate-900 md:text-base">00:00</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex flex-1 px-3 pb-4 sm:px-4 md:px-6 md:pb-6">
+            <section class="glass-panel input-board relative mx-auto flex w-full max-w-3xl flex-1 flex-col overflow-hidden rounded-[1.75rem] p-3 sm:p-4 md:rounded-[2rem] md:p-6">
+                <div id="loading-state" class="flex flex-1 flex-col items-center justify-center px-6 text-center">
+                    <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-900 text-white shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
+                        <i id="loading-icon" class="fa-regular fa-keyboard text-xl"></i>
+                    </div>
+                    <p id="loading-title" class="text-lg font-extrabold text-slate-900">正在準備輸入題</p>
+                    <p id="loading-message" class="mt-2 max-w-md text-sm leading-6 text-slate-400">正在讀取章節單字資料。</p>
+                </div>
+
+                <div id="input-screen" class="hidden min-h-0 flex-1 flex-col">
+                    <div class="meaning-card relative mb-4 flex min-h-[13rem] flex-col items-center justify-center rounded-[1.6rem] px-5 py-8 text-center sm:mb-5 md:min-h-[14rem] md:rounded-[1.8rem]">
+                        <span id="word-pos" class="mb-4 rounded-full bg-slate-900 px-3 py-1 text-xs font-extrabold uppercase tracking-[0.18em] text-white">...</span>
+                        <p class="mb-3 text-xs font-bold uppercase tracking-[0.22em] text-slate-400">中文意思</p>
+                        <h2 id="word-meaning" class="meaning-text text-2xl font-extrabold leading-tight tracking-tight text-slate-900 sm:text-3xl md:text-4xl">Loading...</h2>
+                    </div>
+
+                    <div class="answer-panel flex flex-1 flex-col justify-center rounded-[1.6rem] px-4 py-5 sm:px-5 md:px-6">
+                        <div id="answer-grid" class="spelling-grid" aria-label="英文單字輸入欄"></div>
+                        <p id="answer-feedback" class="mt-5 min-h-[1.5rem] text-center text-sm font-bold text-slate-400"> </p>
+                        <p id="answer-preview" class="answer-preview mt-1 hidden text-center font-mono text-lg font-extrabold tracking-wide text-slate-900 sm:text-xl"></p>
+
+                        <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <button id="reveal-answer-button" type="button"
+                                class="rounded-2xl border border-slate-200 bg-white px-5 py-3.5 font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
+                                公布答案
+                            </button>
+                            <button id="next-word-button" type="button"
+                                class="rounded-2xl bg-slate-900 px-5 py-3.5 font-bold text-white shadow-[0_24px_60px_rgba(15,23,42,0.22)] transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+                                disabled>
+                                下一題
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="input-complete-screen" class="completion-panel absolute inset-0 z-20 hidden flex-col items-center justify-center px-5 text-center">
+                    <div class="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-3xl text-green-500 shadow-sm md:h-24 md:w-24 md:text-4xl">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <p class="text-xs font-bold uppercase tracking-[0.24em] text-slate-400">Input Complete</p>
+                    <h2 class="mt-2 text-2xl font-extrabold tracking-tight text-slate-900 md:text-3xl">恭喜完成輸入練習！</h2>
+                    <p id="input-complete-stats" class="mt-3 text-sm font-medium text-slate-500 md:text-base">耗時 00:00，完成 0 題</p>
+                    <div class="mt-8 flex w-full max-w-md flex-col gap-3 sm:flex-row">
+                        <button id="complete-home-button" type="button"
+                            class="flex-1 rounded-2xl border border-slate-200 bg-white px-5 py-3.5 font-bold text-slate-600 transition hover:bg-slate-50 hover:text-slate-900">
+                            回到首頁
+                        </button>
+                        <button id="complete-restart-button" type="button"
+                            class="flex-1 rounded-2xl bg-slate-900 px-5 py-3.5 font-bold text-white shadow-[0_24px_60px_rgba(15,23,42,0.22)] transition hover:bg-slate-800">
+                            再來一局
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="../static/js/word-input.js"></script>
+    <script src="../static/js/pwa.js"></script>
+</body>
+
+</html>

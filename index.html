@@ -329,7 +329,7 @@
             </div>
         </div>
         <div id="mode-modal-panel"
-            class="modal-surface hidden w-full max-w-lg lg:max-w-xl rounded-[1.9rem] sm:rounded-[2.25rem] overflow-hidden animate-fadeIn">
+            class="modal-surface hidden max-h-[calc(100vh-2rem)] w-full max-w-lg lg:max-w-xl rounded-[1.9rem] sm:rounded-[2.25rem] overflow-y-auto animate-fadeIn">
             <div class="px-4 sm:px-6 lg:px-7 pt-4 sm:pt-6 lg:pt-7 pb-4 sm:pb-6">
                 <div class="flex items-start justify-between gap-3 sm:gap-4">
                     <button id="mode-back-btn"
@@ -386,6 +386,18 @@
                         <div class="min-w-0">
                             <p class="text-base sm:text-lg font-extrabold text-slate-900">選擇題練習</p>
                             <p class="mt-1 text-xs sm:text-sm font-medium text-slate-400">看到英文單字，選出對應中文意思。</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right ml-auto text-slate-300 transition group-hover:text-slate-900"></i>
+                    </button>
+
+                    <button id="word-input-mode-btn" type="button"
+                        class="group flex w-full items-center gap-4 rounded-[1.35rem] border-2 border-slate-100 bg-white/80 p-4 text-left transition hover:border-slate-900 hover:bg-white sm:gap-5 sm:p-5">
+                        <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-[1rem] bg-slate-50 text-xl text-slate-600 transition group-hover:bg-slate-900 group-hover:text-white">
+                            <i class="fa-regular fa-keyboard"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-base sm:text-lg font-extrabold text-slate-900">單字輸入模式</p>
+                            <p class="mt-1 text-xs sm:text-sm font-medium text-slate-400">看到中文意思，拼出英文單字。</p>
                         </div>
                         <i class="fa-solid fa-chevron-right ml-auto text-slate-300 transition group-hover:text-slate-900"></i>
                     </button>

@@ -157,6 +157,14 @@ function goToMultipleChoice() {
     window.location.href = `template/multiple-choice.html?${params.toString()}`;
 }
 
+function goToWordInput() {
+    const params = buildStudyParams();
+
+    if (!params) return;
+
+    window.location.href = `template/word-input.html?${params.toString()}`;
+}
+
 function setupChapterModalEvents() {
     const modal = document.getElementById('chapter-modal');
     const modalPanel = document.getElementById('chapter-modal-panel');
@@ -168,6 +176,7 @@ function setupChapterModalEvents() {
     const flashcardModeBtn = document.getElementById('flashcard-mode-btn');
     const matchingModeBtn = document.getElementById('matching-mode-btn');
     const multipleChoiceModeBtn = document.getElementById('multiple-choice-mode-btn');
+    const wordInputModeBtn = document.getElementById('word-input-mode-btn');
     const rangeInput = document.getElementById('word-count-range');
     const presetButtons = document.querySelectorAll('[data-count-preset]');
 
@@ -181,6 +190,9 @@ function setupChapterModalEvents() {
     matchingModeBtn.addEventListener('click', goToWordMatching);
     if (multipleChoiceModeBtn) {
         multipleChoiceModeBtn.addEventListener('click', goToMultipleChoice);
+    }
+    if (wordInputModeBtn) {
+        wordInputModeBtn.addEventListener('click', goToWordInput);
     }
 
     modal.addEventListener('click', closeChapterModal);

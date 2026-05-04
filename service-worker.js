@@ -1,4 +1,4 @@
-const APP_VERSION = "v6";
+const APP_VERSION = "v7";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
 const OFFLINE_URL = "./template/offline.html";
@@ -9,6 +9,7 @@ const APP_SHELL = [
   "./template/vocabulary-card.html",
   "./template/word-matching.html",
   "./template/multiple-choice.html",
+  "./template/word-input.html",
   OFFLINE_URL,
   "./manifest.webmanifest",
   "./static/js/index.js",
@@ -16,6 +17,7 @@ const APP_SHELL = [
   "./static/js/vocabulary-card.js",
   "./static/js/word-matching.js",
   "./static/js/multiple-choice.js",
+  "./static/js/word-input.js",
   "./static/js/pwa.js",
   "./static/data/list.json",
   "./static/data/第一章-covid-19.json",
