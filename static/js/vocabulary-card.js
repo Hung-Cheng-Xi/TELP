@@ -153,6 +153,27 @@ function flipCard() {
   card.classList.toggle("rotate-y-180", isFlipped);
 }
 
+function hasActiveTextSelection() {
+  const selection = window.getSelection && window.getSelection();
+
+  return Boolean(
+    selection && !selection.isCollapsed && selection.toString().trim(),
+  );
+}
+
+function handleFlipCardClick(event) {
+  if (
+    event &&
+    isSelectableCardTextTarget(event.target, "mouse") &&
+    hasActiveTextSelection()
+  ) {
+    event.stopPropagation();
+    return;
+  }
+
+  flipCard();
+}
+
 function resetFlipState() {
   isFlipped = false;
   document.getElementById("flashcard").classList.remove("rotate-y-180");
@@ -408,6 +429,16 @@ function isFlipClickTarget(target) {
   return Boolean(target && target.closest && target.closest("[data-flip-card]"));
 }
 
+function isSelectableCardTextTarget(target, pointerType) {
+  if (pointerType !== "mouse" || !target || !target.closest) return false;
+
+  const selectableTextTarget = target.closest(
+    ".card-front .word-display, .card-back h2, .card-back h3, .card-back p",
+  );
+
+  return Boolean(selectableTextTarget);
+}
+
 function releaseSwipePointer(cardShell, pointerId) {
   if (
     !cardShell ||
@@ -479,6 +510,7 @@ function handleSwipeStart(event) {
   if (swipeState.isDragging || event.isPrimary === false) return;
   if (event.pointerType === "mouse" && event.button !== 0) return;
   if (isInteractiveSwipeTarget(event.target)) return;
+  if (isSelectableCardTextTarget(event.target, event.pointerType)) return;
 
   swipeState.clickStartedOnFlipTarget = isFlipClickTarget(event.target);
   swipeState.isScrollableTarget = Boolean(
