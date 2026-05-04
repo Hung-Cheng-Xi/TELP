@@ -51,6 +51,8 @@ http://localhost:5173/
 ├── template
 │   ├── vocabulary-card.html   # 單字卡複習頁
 │   ├── word-matching.html     # 中英文配對遊戲頁
+│   ├── multiple-choice.html   # 選擇題練習頁
+│   ├── word-input.html        # 單字輸入練習頁
 │   └── offline.html           # PWA 離線提示頁
 └── static
     ├── data
@@ -62,7 +64,9 @@ http://localhost:5173/
         ├── index.js           # 章節資料載入與首頁卡片渲染
         ├── pwa.js             # Service worker 註冊
         ├── vocabulary-card.js # 單字卡流程、滑動分類、語音朗讀
-        └── word-matching.js   # 配對遊戲流程
+        ├── word-matching.js   # 配對遊戲流程
+        ├── multiple-choice.js # 選擇題流程
+        └── word-input.js      # 單字輸入流程
 ```
 
 ## 題庫格式
@@ -107,4 +111,4 @@ Service worker 需要在 `localhost` 或 HTTPS 環境下運作。第一次載入
 
 ## 開發狀態
 
-目前版本採用 JSON 題庫驅動的單字複習 PWA。主要入口是 `index.html`，核心練習模式是 `template/vocabulary-card.html` 與 `template/word-matching.html`。
+目前版本採用 JSON 題庫驅動的單字複習 PWA。主要入口是 `index.html`，核心練習模式是單字卡、配對、選擇題與單字輸入。
