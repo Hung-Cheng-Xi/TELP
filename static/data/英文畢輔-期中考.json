@@ -154,6 +154,50 @@
     "ex2Zh": "這台吸塵器太吵了。"
   },
   {
+    "word": "talk show",
+    "pos": "n.",
+    "meaning": "談話性節目",
+    "homophone": "無",
+    "roots": "talk 談話 + show 節目",
+    "ex1En": "I like watching a talk show at night.",
+    "ex1Zh": "我喜歡晚上看談話性節目。",
+    "ex2En": "The host invited a famous actor to the talk show.",
+    "ex2Zh": "主持人邀請了一位有名的演員上談話性節目。"
+  },
+  {
+    "word": "talent show",
+    "pos": "n.",
+    "meaning": "才藝表演節目",
+    "homophone": "無",
+    "roots": "talent 才藝 + show 節目",
+    "ex1En": "She sang a song on the talent show.",
+    "ex1Zh": "她在才藝表演節目上唱了一首歌。",
+    "ex2En": "Many young people join talent shows to become famous.",
+    "ex2Zh": "很多年輕人參加才藝表演節目，希望變有名。"
+  },
+  {
+    "word": "panel show",
+    "pos": "n.",
+    "meaning": "座談節目",
+    "homophone": "無",
+    "roots": "panel 小組／座談成員 + show 節目",
+    "ex1En": "The panel show talked about school life.",
+    "ex1Zh": "這個座談節目討論了學校生活。",
+    "ex2En": "Several guests joined the panel show today.",
+    "ex2Zh": "今天有幾位來賓參加了這個座談節目。"
+  },
+  {
+    "word": "costume drama",
+    "pos": "n.",
+    "meaning": "古裝劇節目",
+    "homophone": "無",
+    "roots": "costume 服裝／戲服 + drama 戲劇",
+    "ex1En": "My grandmother likes watching costume dramas.",
+    "ex1Zh": "我的奶奶喜歡看古裝劇。",
+    "ex2En": "This costume drama is about an old king.",
+    "ex2Zh": "這部古裝劇是關於一位古代國王的故事。"
+  },
+  {
     "word": "manicure",
     "pos": "n.",
     "meaning": "美甲；修指甲",
