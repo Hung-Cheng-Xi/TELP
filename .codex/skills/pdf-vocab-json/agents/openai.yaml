@@ -1,0 +1,4 @@
+interface:
+  display_name: "PDF Vocabulary JSON"
+  short_description: "Extract class vocabulary PDFs into structured JSON."
+  default_prompt: "Convert this vocabulary PDF into the project JSON format."
