@@ -1,4 +1,4 @@
-const APP_VERSION = "v9";
+const APP_VERSION = "v10";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
 const OFFLINE_URL = "./template/offline.html";
@@ -28,6 +28,7 @@ const APP_SHELL = [
   "./static/data/第六章-Accelerometer & Gyroscope.json",
   "./static/data/第七章-Knowledge Management.json",
   "./static/data/期中考.json",
+  "./static/data/第八章-What_are_Trademarks.json",
   "./static/data/英文畢輔-期中考.json",
   "./static/icons/apple-touch-icon.png",
   "./static/icons/icon-192.png",
