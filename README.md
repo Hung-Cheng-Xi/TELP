@@ -19,7 +19,7 @@
 
 | 章節檔案 | 單字數 |
 | --- | ---: |
-| `第一章-covid-19.json` | 101 |
+| `第一章-covid 19.json` | 101 |
 | `第二章-特斯拉.json` | 71 |
 | `第三章-tablet.json` | 65 |
 | `第四章-touchscreen.json` | 70 |
