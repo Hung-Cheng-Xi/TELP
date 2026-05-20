@@ -1,4 +1,4 @@
-const APP_VERSION = "v11";
+const APP_VERSION = "v12";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
 const OFFLINE_URL = "./template/offline.html";
@@ -29,6 +29,10 @@ const APP_SHELL = [
   "./static/data/第七章-Knowledge Management.json",
   "./static/data/期中考.json",
   "./static/data/第八章-What are Trademarks.json",
+  "./static/data/第九章-What is Copyright.json",
+  "./static/data/第十章-Patents in the USA.json",
+  "./static/data/第十一章-Filing a Design Patent.json",
+  "./static/data/第十二章-Non Provisional Utility Patent Application.json",
   "./static/data/英文畢輔-期中考.json",
   "./static/icons/apple-touch-icon.png",
   "./static/icons/icon-192.png",
