@@ -28,6 +28,7 @@ const APP_SHELL = [
   "./static/data/第六章-Accelerometer & Gyroscope.json",
   "./static/data/第七章-Knowledge Management.json",
   "./static/data/期中考.json",
+  "./static/data/期末考.json",
   "./static/data/第八章-What are Trademarks.json",
   "./static/data/第九章-What is Copyright.json",
   "./static/data/第十章-Patents in the USA.json",
