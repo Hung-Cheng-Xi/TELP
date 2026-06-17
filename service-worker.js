@@ -35,8 +35,8 @@ const APP_SHELL = [
   "./static/data/第十一章-Filing a Design Patent.json",
   "./static/data/第十二章-Non Provisional Utility Patent Application.json",
   "./static/data/英文畢輔-期中考.json",
-  "./static/data/第十三章_Flexible_Manufacturing_in_the_USA_with_placeholders.json",
-  "./static/data/第十四章_Taguchis_Ideas_about_Quality_with_placeholders.json",
+  "./static/data/第十三章-Flexible Manufacturing in the USA with placeholders.json",
+  "./static/data/第十四章-Taguchis Ideas about Quality with placeholders.json",
   "./static/icons/apple-touch-icon.png",
   "./static/icons/icon-192.png",
   "./static/icons/icon-512.png"
