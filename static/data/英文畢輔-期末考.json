@@ -1,0 +1,90 @@
+[
+  {
+    "word": "fart",
+    "pos": "v./n.",
+    "meaning": "放屁",
+    "homophone": "無",
+    "roots": "fart 放屁 + -ing 動作或名詞形式",
+    "ex1En": "It is rude to fart loudly in public.",
+    "ex1Zh": "在公共場合大聲放屁是不禮貌的。",
+    "ex2En": "He said sorry after farting in class.",
+    "ex2Zh": "他在課堂上放屁後道歉。"
+  },
+  {
+    "word": "burp",
+    "pos": "v./n.",
+    "meaning": "打嗝",
+    "homophone": "無",
+    "roots": "無",
+    "ex1En": "Please say excuse me after you burp.",
+    "ex1Zh": "打嗝後請說不好意思。",
+    "ex2En": "The baby burped after drinking milk.",
+    "ex2Zh": "寶寶喝完牛奶後打了嗝。"
+  },
+  {
+    "word": "pick nose",
+    "pos": "phr.",
+    "meaning": "挖鼻孔",
+    "homophone": "無",
+    "roots": "pick 挑、挖 + one's nose 某人的鼻子",
+    "ex1En": "Do not pick your nose in public.",
+    "ex1Zh": "不要在公共場合挖鼻孔。",
+    "ex2En": "The teacher told him not to pick his nose.",
+    "ex2Zh": "老師告訴他不要挖鼻孔。"
+  },
+  {
+    "word": "tapped foot",
+    "pos": "phr.",
+    "meaning": "跺腳",
+    "homophone": "無",
+    "roots": "tap 輕敲、輕拍 + one's foot 某人的腳",
+    "ex1En": "She tapped her foot while waiting.",
+    "ex1Zh": "她等待時跺著腳。",
+    "ex2En": "He taps his foot when he feels nervous.",
+    "ex2Zh": "他緊張時會跺腳。"
+  },
+  {
+    "word": "cut in line",
+    "pos": "phr.",
+    "meaning": "插隊",
+    "homophone": "無",
+    "roots": "cut 插入、切入 + in line 在隊伍中",
+    "ex1En": "It is not polite to cut in line.",
+    "ex1Zh": "插隊是不禮貌的。",
+    "ex2En": "Please wait your turn and do not cut in line.",
+    "ex2Zh": "請等輪到你，不要插隊。"
+  },
+  {
+    "word": "pick teeth",
+    "pos": "phr.",
+    "meaning": "剔牙",
+    "homophone": "無",
+    "roots": "pick 挑、剔 + one's teeth 某人的牙齒",
+    "ex1En": "He used a toothpick to pick his teeth.",
+    "ex1Zh": "他用牙籤剔牙。",
+    "ex2En": "It is better to pick your teeth quietly.",
+    "ex2Zh": "安靜地剔牙比較好。"
+  },
+  {
+    "word": "no spitting",
+    "pos": "phr.",
+    "meaning": "禁止吐痰",
+    "homophone": "無",
+    "roots": "no 禁止 + spitting 吐痰",
+    "ex1En": "A sign in the station says no spitting.",
+    "ex1Zh": "車站裡的標誌寫著禁止吐痰。",
+    "ex2En": "No spitting keeps public places clean.",
+    "ex2Zh": "禁止吐痰能讓公共場所保持乾淨。"
+  },
+  {
+    "word": "littering",
+    "pos": "n.",
+    "meaning": "亂丟垃圾",
+    "homophone": "無",
+    "roots": "litter 亂丟垃圾 + -ing 行為或活動",
+    "ex1En": "Littering makes the park dirty.",
+    "ex1Zh": "亂丟垃圾會讓公園變髒。",
+    "ex2En": "Students should stop littering at school.",
+    "ex2Zh": "學生應該停止在學校亂丟垃圾。"
+  }
+]

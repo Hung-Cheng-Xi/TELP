@@ -17,7 +17,7 @@
 - 單字輸入練習：看中文意思拼出英文單字，適合加強拼字與主動回想。
 - PWA 支援：包含 `manifest.webmanifest`、`service-worker.js` 與離線頁面，可在支援的瀏覽器安裝並快取本地資源。
 
-目前內建 17 份題庫，共 1,597 個單字：
+目前內建 18 份題庫，共 1,605 個單字：
 
 | 題庫檔案 | 單字數 |
 | --- | ---: |
@@ -33,9 +33,10 @@
 | `第十章-Patents in the USA.json` | 66 |
 | `第十一章-Filing a Design Patent.json` | 37 |
 | `第十二章-Non Provisional Utility Patent Application.json` | 48 |
-| `ch13_Flexible_Manufacturing_in_the_USA_with_placeholders.json` | 30 |
-| `ch14_Taguchis_Ideas_about_Quality_with_placeholders.json` | 51 |
+| `第十三章-Flexible Manufacturing in the USA with placeholders.json` | 30 |
+| `第十四章-Taguchis Ideas about Quality with placeholders.json` | 51 |
 | `英文畢輔-期中考.json` | 32 |
+| `英文畢輔-期末考.json` | 8 |
 | `期中考.json` | 494 |
 | `期末考.json`（暫放） | 251 |
 
