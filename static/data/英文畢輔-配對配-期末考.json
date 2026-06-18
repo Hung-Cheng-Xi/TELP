@@ -1,0 +1,134 @@
+[
+    {
+        "word": "referee",
+        "pos": "n.",
+        "meaning": "裁判",
+        "homophone": "<span class='font-bold'>re- 再看一次 + fair 公平</span> 👉 裁判要反覆確認比賽是否公平，就是<b>referee</b>。",
+        "roots": "源自法語，指被請來判定事情的人；在運動中表示裁判。",
+        "ex1En": "The <span class='text-indigo-600 font-bold'>referee</span> blew the whistle before the game started.",
+        "ex1Zh": "比賽開始前，裁判吹了哨子。",
+        "ex2En": "The <span class='text-indigo-600 font-bold'>referee</span> stood near the goal during the match.",
+        "ex2Zh": "比賽期間，裁判站在球門附近。"
+    },
+    {
+        "word": "racket",
+        "pos": "n.",
+        "meaning": "球拍",
+        "homophone": "<span class='font-bold'>拍擊的工具</span> 👉 用來擊球的拍子就是<b>racket</b>。",
+        "roots": "表示網球、羽球等運動使用的球拍。",
+        "ex1En": "The player held a <span class='text-indigo-600 font-bold'>racket</span> and waited near the badminton net.",
+        "ex1Zh": "球員拿著球拍，在羽球網旁等待。",
+        "ex2En": "This <span class='text-indigo-600 font-bold'>racket</span> is light enough for beginners.",
+        "ex2Zh": "這支球拍對初學者來說夠輕。"
+    },
+    {
+        "word": "badminton net",
+        "pos": "n. phr.",
+        "meaning": "羽球網",
+        "homophone": "<strong>badminton</strong>（羽球）+ <strong>net</strong>（網）👉 羽球比賽中間的網。",
+        "roots": "<strong>badminton</strong>（羽球）+ <strong>net</strong>（網）。",
+        "ex1En": "The shuttlecock landed just over the <span class='text-indigo-600 font-bold'>badminton net</span>.",
+        "ex1Zh": "羽球剛好落在羽球網的另一邊。",
+        "ex2En": "She fixed the <span class='text-indigo-600 font-bold'>badminton net</span> before using her racket.",
+        "ex2Zh": "她使用球拍前，先把羽球網整理好。"
+    },
+    {
+        "word": "baseball glove",
+        "pos": "n. phr.",
+        "meaning": "棒球手套",
+        "homophone": "<strong>baseball</strong>（棒球）+ <strong>glove</strong>（手套）👉 接棒球用的手套。",
+        "roots": "<strong>baseball</strong>（棒球）+ <strong>glove</strong>（手套）。",
+        "ex1En": "He caught the ball with a <span class='text-indigo-600 font-bold'>baseball glove</span>.",
+        "ex1Zh": "他用棒球手套接住了球。",
+        "ex2En": "The trophy was placed beside his old <span class='text-indigo-600 font-bold'>baseball glove</span>.",
+        "ex2Zh": "獎盃被放在他的舊棒球手套旁邊。"
+    },
+    {
+        "word": "whistle",
+        "pos": "n.",
+        "meaning": "哨子",
+        "homophone": "<span class='font-bold'>吹出聲音的小工具</span> 👉 裁判吹的哨子就是<b>whistle</b>。",
+        "roots": "表示用來吹出尖銳聲音的哨子。",
+        "ex1En": "The referee used a <span class='text-indigo-600 font-bold'>whistle</span> to stop the game.",
+        "ex1Zh": "裁判用哨子停止比賽。",
+        "ex2En": "I heard a <span class='text-indigo-600 font-bold'>whistle</span> near the goal.",
+        "ex2Zh": "我在球門附近聽到哨聲。"
+    },
+    {
+        "word": "trophy",
+        "pos": "n.",
+        "meaning": "獎盃",
+        "homophone": "<span class='font-bold'>勝利的紀念品</span> 👉 贏得比賽後拿到的獎盃就是<b>trophy</b>。",
+        "roots": "表示勝利或成就的獎品、紀念物。",
+        "ex1En": "The team lifted the <span class='text-indigo-600 font-bold'>trophy</span> after the final match.",
+        "ex1Zh": "決賽後，隊伍舉起了獎盃。",
+        "ex2En": "The referee smiled when the players received the <span class='text-indigo-600 font-bold'>trophy</span>.",
+        "ex2Zh": "球員領取獎盃時，裁判露出了微笑。"
+    },
+    {
+        "word": "goal",
+        "pos": "n.",
+        "meaning": "球門",
+        "homophone": "<span class='font-bold'>進球的位置</span> 👉 球要踢進去的地方就是<b>goal</b>。",
+        "roots": "作運動名詞時，表示球門或得分區域。",
+        "ex1En": "The ball rolled into the <span class='text-indigo-600 font-bold'>goal</span>.",
+        "ex1Zh": "球滾進了球門。",
+        "ex2En": "The referee checked whether the ball crossed the <span class='text-indigo-600 font-bold'>goal</span> line.",
+        "ex2Zh": "裁判確認球是否越過球門線。"
+    },
+    {
+        "word": "skates",
+        "pos": "n.",
+        "meaning": "冰鞋",
+        "homophone": "<strong>skate</strong>（滑冰；溜冰鞋）+ <strong>-s</strong>（複數）👉 一雙冰鞋。",
+        "roots": "<strong>skate</strong>（滑冰；溜冰鞋）+ <strong>-s</strong>（複數）。",
+        "ex1En": "She put on her <span class='text-indigo-600 font-bold'>skates</span> before going onto the ice.",
+        "ex1Zh": "她上冰面前先穿上冰鞋。",
+        "ex2En": "My feet hurt because the <span class='text-indigo-600 font-bold'>skates</span> were too tight.",
+        "ex2Zh": "我的腳很痛，因為冰鞋太緊了。"
+    },
+    {
+        "word": "sore throat",
+        "pos": "n. phr.",
+        "meaning": "喉嚨痛",
+        "homophone": "<strong>sore</strong>（疼痛的）+ <strong>throat</strong>（喉嚨）👉 喉嚨感到疼痛。",
+        "roots": "<strong>sore</strong>（疼痛的）+ <strong>throat</strong>（喉嚨）。",
+        "ex1En": "I had a <span class='text-indigo-600 font-bold'>sore throat</span> after the cold game.",
+        "ex1Zh": "在寒冷的比賽後，我喉嚨痛。",
+        "ex2En": "A sore throat and a high fever can make it hard to study.",
+        "ex2Zh": "喉嚨痛和高燒會讓人很難讀書。"
+    },
+    {
+        "word": "high fever",
+        "pos": "n. phr.",
+        "meaning": "高燒",
+        "homophone": "<strong>high</strong>（高的）+ <strong>fever</strong>（發燒）👉 體溫很高的發燒。",
+        "roots": "<strong>high</strong>（高的）+ <strong>fever</strong>（發燒）。",
+        "ex1En": "The student stayed home because he had a <span class='text-indigo-600 font-bold'>high fever</span>.",
+        "ex1Zh": "那名學生因為高燒而待在家。",
+        "ex2En": "She had a headache and a <span class='text-indigo-600 font-bold'>high fever</span> last night.",
+        "ex2Zh": "她昨晚頭痛又高燒。"
+    },
+    {
+        "word": "headache",
+        "pos": "n.",
+        "meaning": "頭痛",
+        "homophone": "<strong>head</strong>（頭）+ <strong>ache</strong>（疼痛）👉 頭在痛就是<b>headache</b>。",
+        "roots": "<strong>head</strong>（頭）+ <strong>ache</strong>（疼痛）。",
+        "ex1En": "I got a <span class='text-indigo-600 font-bold'>headache</span> after studying for hours.",
+        "ex1Zh": "我讀書好幾個小時後開始頭痛。",
+        "ex2En": "A high fever may come with a serious <span class='text-indigo-600 font-bold'>headache</span>.",
+        "ex2Zh": "高燒可能會伴隨嚴重頭痛。"
+    },
+    {
+        "word": "sneeze",
+        "pos": "v.",
+        "meaning": "打噴嚏",
+        "homophone": "<span class='font-bold'>鼻子突然噴一下</span> 👉 打噴嚏就是<b>sneeze</b>。",
+        "roots": "表示從鼻子和嘴巴突然噴出空氣。",
+        "ex1En": "Please cover your mouth when you <span class='text-indigo-600 font-bold'>sneeze</span>.",
+        "ex1Zh": "打噴嚏時請遮住嘴巴。",
+        "ex2En": "He began to <span class='text-indigo-600 font-bold'>sneeze</span> after getting a sore throat.",
+        "ex2Zh": "他喉嚨痛之後開始打噴嚏。"
+    }
+]

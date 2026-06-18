@@ -1,4 +1,4 @@
-const APP_VERSION = "v14";
+const APP_VERSION = "v15";
 const STATIC_CACHE = `vocab-static-${APP_VERSION}`;
 const RUNTIME_CACHE = `vocab-runtime-${APP_VERSION}`;
 const OFFLINE_URL = "./template/offline.html";
@@ -36,6 +36,7 @@ const APP_SHELL = [
   "./static/data/第十四章-Taguchis Ideas about Quality with placeholders.json",
   "./static/data/英文畢輔-期中考.json",
   "./static/data/英文畢輔-期末考.json",
+  "./static/data/英文畢輔-配對配-期末考.json",
   "./static/data/期中考.json",
   "./static/data/期末考.json",
   "./static/icons/apple-touch-icon.png",
