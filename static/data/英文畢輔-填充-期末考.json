@@ -1,0 +1,112 @@
+[
+  {
+    "word": "purchase",
+    "pos": "v./n.",
+    "meaning": "購買",
+    "homophone": "無",
+    "roots": "purchase 購買、取得；可作動詞或名詞",
+    "ex1En": "I need to purchase new apparel for the interview.",
+    "ex1Zh": "我需要為面試購買新的服飾。",
+    "ex2En": "She plans to purchase a cosmetic product online.",
+    "ex2Zh": "她打算在網路上購買一項化妝品。"
+  },
+  {
+    "word": "jet lag",
+    "pos": "n.",
+    "meaning": "時差",
+    "homophone": "無",
+    "roots": "jet 噴射機 + lag 落後、延遲",
+    "ex1En": "After the long flight, I had jet lag for two days.",
+    "ex1Zh": "長途飛行後，我有兩天的時差反應。",
+    "ex2En": "Jet lag made it hard to look presentable at the meeting.",
+    "ex2Zh": "時差讓我很難在會議上看起來得體。"
+  },
+  {
+    "word": "language barrier",
+    "pos": "n. phr.",
+    "meaning": "語言障礙",
+    "homophone": "無",
+    "roots": "language 語言 + barrier 障礙",
+    "ex1En": "The language barrier made it difficult to ask for directions.",
+    "ex1Zh": "語言障礙讓問路變得困難。",
+    "ex2En": "A translation app can help with a language barrier when traveling.",
+    "ex2Zh": "旅行時，翻譯 app 可以協助克服語言障礙。"
+  },
+  {
+    "word": "presentable",
+    "pos": "adj.",
+    "meaning": "得體的",
+    "homophone": "無",
+    "roots": "present 呈現 + -able 可...的",
+    "ex1En": "He wore clean apparel so he would look presentable.",
+    "ex1Zh": "他穿上乾淨的服飾，好讓自己看起來得體。",
+    "ex2En": "After sleeping on the plane, I did not feel presentable.",
+    "ex2Zh": "在飛機上睡過後，我覺得自己看起來不太得體。"
+  },
+  {
+    "word": "cosmetic",
+    "pos": "n.",
+    "meaning": "化妝品",
+    "homophone": "無",
+    "roots": "cosmet- 整理、美化 + -ic 相關的",
+    "ex1En": "She bought a cosmetic product before the trip.",
+    "ex1Zh": "她在旅行前買了一項化妝品。",
+    "ex2En": "This cosmetic is appropriate for daily use.",
+    "ex2Zh": "這項化妝品適合日常使用。"
+  },
+  {
+    "word": "billboards",
+    "pos": "n.",
+    "meaning": "廣告看板",
+    "homophone": "無",
+    "roots": "billboard 廣告看板 + -s 複數",
+    "ex1En": "The new store put large billboards near the station.",
+    "ex1Zh": "那間新店在車站附近放了大型廣告看板。",
+    "ex2En": "Billboards can advertise apparel and cosmetics.",
+    "ex2Zh": "廣告看板可以宣傳服飾和化妝品。"
+  },
+  {
+    "word": "pierced",
+    "pos": "adj.",
+    "meaning": "穿洞的",
+    "homophone": "無",
+    "roots": "pierce 穿透、刺穿 + -ed 已...的",
+    "ex1En": "She has pierced ears and wears small earrings.",
+    "ex1Zh": "她有穿耳洞，並戴著小耳環。",
+    "ex2En": "A pierced nose may be uncommon in some workplaces.",
+    "ex2Zh": "在某些職場中，穿鼻洞可能並不常見。"
+  },
+  {
+    "word": "appropriate",
+    "pos": "adj.",
+    "meaning": "適當的",
+    "homophone": "無",
+    "roots": "來自 proper 適當的、合宜的概念",
+    "ex1En": "A suit is appropriate apparel for the formal dinner.",
+    "ex1Zh": "西裝是正式晚宴中適當的服飾。",
+    "ex2En": "Please choose words that are appropriate for class.",
+    "ex2Zh": "請選擇適合課堂使用的字詞。"
+  },
+  {
+    "word": "apparel",
+    "pos": "n.",
+    "meaning": "服飾",
+    "homophone": "無",
+    "roots": "apparel 服裝、衣著",
+    "ex1En": "The store sells casual apparel for travelers.",
+    "ex1Zh": "這間店販售旅客穿的休閒服飾。",
+    "ex2En": "Rainy weather made waterproof apparel useful.",
+    "ex2Zh": "下雨天讓防水服飾變得實用。"
+  },
+  {
+    "word": "uncommon",
+    "pos": "adj.",
+    "meaning": "罕見的",
+    "homophone": "無",
+    "roots": "un- 不 + common 常見的",
+    "ex1En": "It is uncommon to see empty billboards in this city.",
+    "ex1Zh": "在這座城市看到空的廣告看板是罕見的。",
+    "ex2En": "Jet lag is not uncommon after a long flight.",
+    "ex2Zh": "長途飛行後有時差反應並不罕見。"
+  }
+]
