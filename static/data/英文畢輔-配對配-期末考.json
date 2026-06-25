@@ -22,11 +22,11 @@
         "ex2Zh": "這支球拍對初學者來說夠輕。"
     },
     {
-        "word": "badminton net",
-        "pos": "n. phr.",
-        "meaning": "羽球網",
+        "word": "net",
+        "pos": "n.",
+        "meaning": "網",
         "homophone": "<strong>badminton</strong>（羽球）+ <strong>net</strong>（網）👉 羽球比賽中間的網。",
-        "roots": "<strong>badminton</strong>（羽球）+ <strong>net</strong>（網）。",
+        "roots": "<strong>net</strong>（網）。",
         "ex1En": "The shuttlecock landed just over the <span class='text-indigo-600 font-bold'>badminton net</span>.",
         "ex1Zh": "羽球剛好落在羽球網的另一邊。",
         "ex2En": "She fixed the <span class='text-indigo-600 font-bold'>badminton net</span> before using her racket.",
